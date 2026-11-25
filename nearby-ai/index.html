@@ -243,6 +243,10 @@ section.compare th.on{color:var(--ink)}
 .reply{border-radius:var(--assist-radius)}
 .btn-porch{background:var(--assist-cta);color:var(--assist-cta-ink);border-radius:var(--assist-radius)}
 .diag{border-color:var(--porch)}
+.tt-auth-url{display:flex;align-items:center;justify-content:center;gap:5px;font-size:11.5px;color:var(--ink-2);background:var(--soft);border-radius:8px;padding:5px 8px;margin:0 0 12px}
+.tt-auth-acct{font-size:13px;font-weight:600;border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:10px 0}
+.tt-auth-perm{margin:0 0 6px;padding-left:18px;font-size:13px;color:var(--ink)}
+.tt-auth-perm li{margin:3px 0}
 :root{--news:#DE3232;--news-on:#FFFFFF;--news-soft:#FFECEC;--news-bar:#FF5A5A;--news-bar-ink:#FFFFFF;--news-bar-chip:rgba(255,255,255,.22);--news-font:"Roboto", system-ui, sans-serif;--news-logo-font:"Roboto", system-ui, sans-serif;--news-logo-weight:900;--news-headline-font:"Roboto", system-ui, sans-serif;--news-body-font:"Roboto", system-ui, sans-serif;--porch:#FF5A1F;--porch-ink:#FFFFFF;--porch-soft:#FFF1EA;--assist-font:"Rubik", system-ui, sans-serif;--assist-logo:#1F1F1F;--assist-me:#1F1F1F;--assist-me-ink:#FFFFFF;--assist-cta:#111111;--assist-cta-ink:#FFFFFF;--assist-radius:999px;}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--news:#FF6B6B;--news-on:#1A0606;--news-soft:#3A1616;--news-bar:#C93232;--news-bar-ink:#FFFFFF;--news-bar-chip:rgba(255,255,255,.2);--porch:#FF8A5C;--porch-ink:#2A0F02;--porch-soft:#3A1D10;--assist-logo:#EDEDED;--assist-me:#EDEDED;--assist-me-ink:#121212;--assist-cta:#F2F2F2;--assist-cta-ink:#111111;}}
 :root[data-theme="dark"]{--news:#FF6B6B;--news-on:#1A0606;--news-soft:#3A1616;--news-bar:#C93232;--news-bar-ink:#FFFFFF;--news-bar-chip:rgba(255,255,255,.2);--porch:#FF8A5C;--porch-ink:#2A0F02;--porch-soft:#3A1D10;--assist-logo:#EDEDED;--assist-me:#EDEDED;--assist-me-ink:#121212;--assist-cta:#F2F2F2;--assist-cta-ink:#111111;}
@@ -415,6 +419,47 @@ section.compare th.on{color:var(--ink)}
     return bg;
   }
   var TT_BAR = '<div class="tt-bar"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><path d="M7 8h10M12 8v9" style="stroke:var(--phone)" stroke-width="2.4" stroke-linecap="round"/></svg>Thumbtack</div>';
+
+  /* ------------ Thumbtack homeowner authorization (shared) ------------
+     build.py fills TT_AUTH from platform/thumbtack-auth.json. To change the experience,
+     edit that file. A new "experience" key needs a renderer in TT_AUTH_UI below.
+     ttAuthorize(o) returns a Promise of { access_token, ... } or rejects with { status:"cancelled" }.
+     o = { key: option key for the event log, clientId: partner OAuth client id } */
+  var TT_AUTH = {"about": "How a homeowner authorizes a partner to send a request or book a Preset (fixed-price) Job through Thumbtack's API or MCP server. Single source of truth for every prototype, deck and skill step. When Thumbtack changes the experience, update this file (and add a renderer in templates/partials/thumbtack-auth.js if the experience key is new), then rebuild every partner.", "verified": "2026-11-25", "source": "https://developers.thumbtack.com/docs/getting-started/authentication", "experience": "oauth2_authorization_code", "label": "OAuth 2.0 authorization code (homeowner signs in to Thumbtack)", "appliesTo": "Sending a request (create_request, POST /api/v4/requests) or booking a Preset Job (book_preset_job) on the homeowner's behalf", "appAuth": {"label": "app-level OAuth client credentials", "appliesTo": "Search, refine, reviews and categories. No homeowner sign-in."}, "authorizeUrl": "https://auth.thumbtack.com/oauth2/auth", "tokenUrl": "https://auth.thumbtack.com/oauth2/token", "redirectUri": "https://partner.example/oauth/thumbtack/callback", "scopes": ["demand::requests", "demand::bookings", "offline_access"], "scopesNote": "Scope names other than offline_access are illustrative. Real per-endpoint scopes are in the API Reference.", "accessTokenSeconds": 3600, "refreshTokenDays": 180, "consent": {"title": "Sign in to Thumbtack", "subtitle": "Nia wants to send requests and book jobs for you.", "account": "Jordan Lee · jordan@example.com", "permissions": ["Send your project details to pros you approve", "Book fixed-price visits you approve", "See replies and bookings for those requests"], "note": "Nia still asks you before every request or booking.", "allow": "Allow", "working": "Connecting…", "cancel": "Cancel", "connected": "Connected to Thumbtack as Jordan Lee"}, "unconfirmed": ["The portal shows a user-level token on POST /api/v4/requests but does not say which flow the MCP server uses for create_request or book_preset_job.", "Consent screen copy and layout are a Thumbtack sketch, not the real auth.thumbtack.com page."]};
+  function ttRand(){ return Math.random().toString(36).slice(2, 10); }
+  function ttHost(u){ return String(u).replace(/^https?:\/\//, "").split("/")[0]; }
+  var TT_AUTH_UI = {
+    oauth2_authorization_code: function(o){
+      var a = TT_AUTH, c = a.consent, state = ttRand();
+      var q = "response_type=code&client_id=" + encodeURIComponent(o.clientId) + "&redirect_uri=" + encodeURIComponent(a.redirectUri) +
+        "&scope=" + encodeURIComponent(a.scopes.join(" ")) + "&state=" + state;
+      setReq('<b>GET</b> ' + esc(a.authorizeUrl) + '?' + esc(q) + '\n\n// ' + esc(a.label) + '\n// Opens in a secure browser sheet. ' + esc(a.scopesNote));
+      log(o.key, "oauth_authorize", "client_id=" + o.clientId + " scope=" + a.scopes.join(" "));
+      return new Promise(function(ok, no){
+        var settled = false;
+        var html = '<div class="tt-auth-url"><svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1h1Zm2 0h6V7a3 3 0 0 0-6 0v3Z"/></svg>' + esc(ttHost(a.authorizeUrl)) + '</div>' +
+          TT_BAR + '<h3 id="sheetTitle">' + esc(c.title) + '</h3><p class="sub">' + esc(c.subtitle) + '</p>' +
+          '<div class="tt-auth-acct">' + esc(c.account) + '</div>' +
+          '<ul class="tt-auth-perm">' + c.permissions.map(function(p){ return '<li>' + esc(p) + '</li>'; }).join("") + '</ul>' +
+          '<p class="sub">' + esc(c.note) + '</p>' +
+          '<button class="btn btn-tt" data-connect>' + esc(c.allow) + '</button><button class="btn btn-ghost" data-close>' + esc(c.cancel) + '</button>';
+        openSheet(html, function(e, close){
+          var b = e.target.closest("[data-connect]"); if (!b) return;
+          b.disabled = true; b.textContent = c.working;
+          var code = "code_" + ttRand();
+          log(o.key, "oauth_consent", "granted, code returned to " + ttHost(a.redirectUri));
+          setReq('<b>POST</b> ' + esc(a.tokenUrl) + '  (partner server, never the phone)\n' +
+            jsonBlock({ grant_type:"authorization_code", code:code, redirect_uri:a.redirectUri, client_id:o.clientId, client_secret:"(server side only)" }));
+          setTimeout(function(){
+            var tok = { access_token:"tt_at_" + ttRand(), token_type:"Bearer", expires_in:a.accessTokenSeconds, refresh_token:"tt_rt_" + ttRand(), scope:a.scopes.join(" ") };
+            log(o.key, "oauth_token", "expires_in=" + a.accessTokenSeconds + "s, refresh up to " + a.refreshTokenDays + " days");
+            settled = true; close(true); ok(tok);
+          }, 700);
+        }, function(){ if (!settled) { log(o.key, "oauth_cancelled", "nothing sent"); no({ status:"cancelled" }); } });
+      });
+    }
+  };
+  function ttAuthorize(o){ return TT_AUTH_UI[TT_AUTH.experience](o); }
 
   /* =========================================================
      OPTION A · coverage-gap referral
@@ -821,7 +866,7 @@ section.compare th.on{color:var(--ink)}
     title:"Option C · AI assistant via Thumbtack MCP",
     hint:"Nia keeps its own diagnosis, then calls Thumbtack's MCP server as a tool. Thumbtack supplies the follow-up questions, pros and booking. The homeowner approves before any pro is contacted.",
     jsonTitle:"Mock MCP result · tools/call search_pros",
-    s:{ zip:"94040", preset:false, mode:"ok", latency:800, step:"start", answers:{}, pros:[], qs:[], run:0 },
+    s:{ zip:"94040", preset:false, mode:"ok", latency:800, step:"start", answers:{}, pros:[], qs:[], run:0, token:null },
     mocks:cDefaults(),
     controls: function(){
       var z = Object.keys(ZIPS).map(function(k){ return '<option value="'+k+'"'+(k===C.s.zip?' selected':'')+'>'+esc(ZIPS[k].label)+'</option>'; }).join("");
@@ -853,24 +898,28 @@ section.compare th.on{color:var(--ink)}
       ["Two follow-up questions","<code>structuredContent.followUpQuestions</code> from <code>search_pros</code>"],
       ["Top three read-back","<code>structuredContent.data</code> after <code>refine_search</code>"],
       ["Fixed price and time window","<code>presetJob</code> (Preset Jobs toolset, marked in development)"],
-      ["Approval sheet then booking","<code>create_request</code> or <code>book_preset_job</code>, only after the homeowner taps Approve"]
+      ["Approval sheet","Nia (partner side). Nothing reaches a pro until the homeowner taps Approve"],
+      ["Thumbtack sign-in sheet","Homeowner OAuth (authorization code) at <code>auth.thumbtack.com</code>, the first time a request or booking is sent. Search stays app-level"],
+      ["Sent or booked","<code>create_request</code> or <code>book_preset_job</code>, with the homeowner's bearer token"]
     ],
     brief:[
       ["Nearby AI gets","Full fulfilment inside Nia with no front-end build. Nearby becomes an assistant that gets jobs done, not one that only diagnoses them."],
       ["Thumbtack gets","Another major AI-assistant channel, with requests that arrive carrying rich context."],
       ["Precedent","ChatGPT and Alexa+ reach Thumbtack through MCP or agentic access. Nia already owns triage, so Thumbtack enters later in the conversation."],
-      ["Effort: medium","OAuth client plus tool calls. Nearby must decide how Thumbtack sits next to its own pros, and Preset Jobs depends on Thumbtack's toolset timeline."]
+      ["Effort: medium","App-level OAuth for search, plus a homeowner Thumbtack sign-in before the first request or booking. Nearby must decide how Thumbtack sits next to its own pros, and Preset Jobs depends on Thumbtack's toolset timeline."]
     ],
     start: function(){
       if (closeSheet) closeSheet(true);
-      C.s.run++; C.s.step = "start"; C.s.answers = {}; C.s.pros = []; C.s.qs = []; C.s.chosen = null; C.s.err = false;
+      C.s.run++; C.s.step = "start"; C.s.answers = {}; C.s.pros = []; C.s.qs = []; C.s.chosen = null; C.s.err = false; C.s.token = null; C.s.note = "";
       setReq("Waiting for the homeowner to ask Nia for help.");
       log("c","session_start","zip="+C.s.zip+" toolset="+(C.s.preset?"preset_jobs":"search_pros"));
       C.render();
     },
-    call: function(tool, args){
+    call: function(tool, args, userToken){
       var req = { jsonrpc:"2.0", id:Math.floor(Math.random()*1000), method:"tools/call", params:{ name:tool, arguments:args } };
-      setReq('<b>MCP</b> https://mcp.thumbtack.com  (OAuth client: newsbreak-nearby)\n' + jsonBlock(req));
+      var auth = userToken ? 'Authorization: Bearer ' + esc(userToken.slice(0, 10)) + '…  (homeowner token, ' + esc(TT_AUTH.experience) + ')'
+        : '(' + esc(TT_AUTH.appAuth.label) + ': nearby-ai)';
+      setReq('<b>MCP</b> https://mcp.thumbtack.com  ' + auth + '\n' + jsonBlock(req));
       log("c","tools/call", tool + " " + JSON.stringify(args));
     },
     search: function(){
@@ -939,7 +988,7 @@ section.compare th.on{color:var(--ink)}
         if (s.step === "q" && s.err) h += '<div class="state err">Thumbtack didn\'t answer. Pick an option again to retry.</div>';
       }
       if (s.step === "refining") h += '<div class="tool"><b>refine_search</b> '+esc(Object.keys(s.answers).map(function(k){ return s.answers[k]; }).join(" · "))+'</div>' + typing();
-      if (s.step === "results" || s.step === "booked") {
+      if (s.step === "results" || s.step === "sending" || s.step === "booked") {
         h += '<div class="tool"><b>refine_search</b> '+esc(Object.keys(s.answers).map(function(k){ return s.answers[k]; }).join(" · "))+'</div>';
         var top = s.pros.slice(0,3);
         h += '<div class="bub bot">Here are the top '+top.length+' near you. '+(s.preset?'Some offer a fixed-price visit you can book now. ':'')+'Tap one to review before I send anything.</div>';
@@ -948,6 +997,9 @@ section.compare th.on{color:var(--ink)}
           return proCard(p, "data-cpro", price);
         }).join("") + '</div>';
       }
+      if (s.note) h += '<div class="bub bot">'+esc(s.note)+'</div>';
+      if ((s.step === "sending" || s.step === "booked") && s.token) h += '<div class="state ok">'+esc(TT_AUTH.consent.connected)+'</div>';
+      if (s.step === "sending") h += '<div class="tool"><b>'+(s.preset && s.chosen.presetJob?'book_preset_job':'create_request')+'</b> '+esc(s.chosen.businessName)+'</div>' + typing();
       if (s.step === "booked" && s.chosen) {
         var pj = s.preset && s.chosen.presetJob;
         h += '<div class="tool"><b>'+(pj?'book_preset_job':'create_request')+'</b> '+esc(s.chosen.businessName)+'</div>';
@@ -969,7 +1021,7 @@ section.compare th.on{color:var(--ink)}
         return;
       }
       var p = e.target.closest("[data-cpro]");
-      if (p && C.s.step === "results") { var pr = C.s.pros.filter(function(x){ return x.businessID === p.dataset.cpro; })[0]; if (pr) C.sheet(pr); }
+      if (p && C.s.step === "results") { C.s.note = ""; var pr = C.s.pros.filter(function(x){ return x.businessID === p.dataset.cpro; })[0]; if (pr) C.sheet(pr); }
     },
     sheet: function(p){
       var pj = C.s.preset && p.presetJob;
@@ -982,22 +1034,35 @@ section.compare th.on{color:var(--ink)}
         (pj ? '<div class="field"><label>Fixed price visit</label><div>'+esc(pj.title)+' · $'+esc(pj.price)+' · '+esc(pj.window)+'</div></div>' : '<div class="field"><label>Next step</label><div>The pro replies with a quote. No charge to request.</div></div>') +
         '</div><p class="sub" style="margin-top:10px">Nia shares your name, ZIP and these details with this pro only.</p>' +
         '<button class="btn btn-porch" data-approve>'+(pj?'Approve and book':'Approve and send')+'</button><button class="btn btn-ghost" data-close>Not this one</button>';
-      openSheet(html, function(e, close, bg){
+      openSheet(html, function(e, close){
         var b = e.target.closest("[data-approve]"); if (!b) return;
-        b.disabled = true; b.textContent = pj ? "Booking…" : "Sending…";
         log("c","homeowner_approved","business="+p.businessID);
-        C.call(pj ? "book_preset_job" : "create_request", { businessID:p.businessID, zipCode:C.s.zip, answers:C.s.answers, utm_source:"cma-newsbreak-demo" });
         var run = C.s.run;
-        mockCall(C, function(){ return { ref:(pj?"Booking ":"Request ") + "#" + Math.floor(Math.random()*9e6+1e6) }; }).then(function(res){
+        if (C.s.token) { close(true); C.send(p); return; }
+        b.disabled = true; b.textContent = "Opening Thumbtack…";
+        ttAuthorize({ key:"c", clientId:"nearby-ai" }).then(function(tok){
           if (run !== C.s.run) return;
-          C.s.chosen = p; C.s.ref = res.ref; C.s.step = "booked";
-          log("c","tool_result", res.ref + " " + UTM);
-          close(true); C.render();
-        }).catch(function(err){
-          log("c","tool_error", (err.status||"") + " " + (err.detail||""));
-          b.disabled = false; b.textContent = "Try again";
+          C.s.token = tok.access_token; C.send(p);
+        }).catch(function(){
+          if (run !== C.s.run) return;
+          C.s.note = "No problem. I haven't sent anything. Tap a pro when you're ready."; C.render();
         });
       }, function(){ log("c","approval_dismissed","business="+p.businessID); });
+    },
+    send: function(p){
+      var pj = C.s.preset && p.presetJob, run = C.s.run;
+      C.s.chosen = p; C.s.note = ""; C.s.step = "sending"; C.render();
+      C.call(pj ? "book_preset_job" : "create_request", { businessID:p.businessID, zipCode:C.s.zip, answers:C.s.answers, utm_source:"cma-newsbreak-demo" }, C.s.token);
+      mockCall(C, function(){ return { ref:(pj?"Booking ":"Request ") + "#" + Math.floor(Math.random()*9e6+1e6) }; }).then(function(res){
+        if (run !== C.s.run) return;
+        C.s.ref = res.ref; C.s.step = "booked";
+        log("c","tool_result", res.ref + " " + UTM);
+        C.render();
+      }).catch(function(err){
+        if (run !== C.s.run) return;
+        log("c","tool_error", (err.status||"") + " " + (err.detail||""));
+        C.s.step = "results"; C.s.note = "Thumbtack didn't confirm that. Nothing was sent. Tap the pro to try again."; C.render();
+      });
     }
   };
 
