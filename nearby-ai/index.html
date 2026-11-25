@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Thumbtack × NewsBreak Concept</title>
+<title>Thumbtack × Nearby AI Concept</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -250,10 +250,10 @@ section.compare th.on{color:var(--ink)}
 
 <div class="shell">
   <header class="top">
-    <p class="internal">Concept mockup by Thumbtack · not a NewsBreak product · screens are illustrative</p>
-    <p class="eyebrow">Thumbtack Partner Platform · NewsBreak (Particle Media) concept prototype</p>
-    <h1>Thumbtack inside NewsBreak and Nearby AI</h1>
-    <p>Three ways NewsBreak could plug Thumbtack into NewsBreak and Nearby AI. Screens are styled after the partner's apps to show fit; they are a Thumbtack sketch, not the partner's real design. Each phone renders from the mock API response on the right, so you can edit the JSON, change ZIP codes, and force empty or error states.</p>
+    <p class="internal">Concept mockup by Thumbtack · not a Nearby AI or NewsBreak product · screens are illustrative</p>
+    <p class="eyebrow">Thumbtack Partner Platform · Nearby AI (NewsBreak, Particle Media) concept prototype</p>
+    <h1>Thumbtack inside Nearby AI</h1>
+    <p>Three ways Nearby AI could plug Thumbtack into Nia and NewsBreak&#x27;s local stories. Screens are styled after the partner's apps to show fit; they are a Thumbtack sketch, not the partner's real design. Each phone renders from the mock API response on the right, so you can edit the JSON, change ZIP codes, and force empty or error states.</p>
   </header>
 
   <div class="switch" role="tablist" aria-label="Integration options">
@@ -471,14 +471,14 @@ section.compare th.on{color:var(--ink)}
     resetMocks: function(){ A.mocks = aDefaults(); },
     validate: validatePros,
     mapping:[
-      ["Diagnosis card, Nia's six answers","Nearby (NewsBreak side), sent as <code>projectMetadata</code>"],
+      ["Diagnosis card, Nia's six answers","Nearby AI, sent as <code>projectMetadata</code>"],
       ["“Thumbtack has 4 top-rated plumbers”","<code>data.length</code> from search-filtered"],
       ["Pro cards","<code>businessName</code>, <code>rating</code>, <code>numberOfReviews</code>, <code>isTopPro</code>, <code>startingPrice</code>"],
       ["Pre-filled request sheet","Request Flow widget (<code>widgets.requestFlowURL</code>) or <code>POST /api/v4/requests</code>"],
       ["Attribution and payout","<code>utm_source</code> on every call; pay per accepted incremental request, net of refunds"]
     ],
     brief:[
-      ["NewsBreak gets","Revenue on demand it drops today, with no new pro recruiting. The homeowner stays in Nearby until the job is placed."],
+      ["Nearby AI gets","Revenue on demand it drops today, with no new pro recruiting. The homeowner stays in Nearby until the job is placed."],
       ["Thumbtack gets","Pre-scoped requests from people actively looking for help, in markets where Nearby is thin."],
       ["Precedent","Nextdoor and OfferUp embed Find Pros and widgets. Here the trigger is a failed match, so Thumbtack is the fallback and never competes for the same request."],
       ["Effort: low to medium","Two API calls and one widget. The real work is defining a coverage gap and agreeing the commercial terms."]
@@ -848,7 +848,7 @@ section.compare th.on{color:var(--ink)}
       return validatePros(sc);
     },
     mapping:[
-      ["Diagnosis card","Nia (NewsBreak side); Thumbtack is not asked to diagnose"],
+      ["Diagnosis card","Nia (partner side); Thumbtack is not asked to diagnose"],
       ["“Using Thumbtack” disclosure and tool lines","Each MCP <code>tools/call</code>, shown so the homeowner knows who is searching"],
       ["Two follow-up questions","<code>structuredContent.followUpQuestions</code> from <code>search_pros</code>"],
       ["Top three read-back","<code>structuredContent.data</code> after <code>refine_search</code>"],
@@ -856,7 +856,7 @@ section.compare th.on{color:var(--ink)}
       ["Approval sheet then booking","<code>create_request</code> or <code>book_preset_job</code>, only after the homeowner taps Approve"]
     ],
     brief:[
-      ["NewsBreak gets","Full fulfilment inside Nia with no front-end build. Nearby becomes an assistant that gets jobs done, not one that only diagnoses them."],
+      ["Nearby AI gets","Full fulfilment inside Nia with no front-end build. Nearby becomes an assistant that gets jobs done, not one that only diagnoses them."],
       ["Thumbtack gets","Another major AI-assistant channel, with requests that arrive carrying rich context."],
       ["Precedent","ChatGPT and Alexa+ reach Thumbtack through MCP or agentic access. Nia already owns triage, so Thumbtack enters later in the conversation."],
       ["Effort: medium","OAuth client plus tool calls. Nearby must decide how Thumbtack sits next to its own pros, and Preset Jobs depends on Thumbtack's toolset timeline."]
