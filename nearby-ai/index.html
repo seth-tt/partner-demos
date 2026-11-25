@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thumbtack × NewsBreak Concept</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Roboto:wght@400;500;700;900&amp;family=Rubik:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+/* Layout: header, option switcher, then phone (left) beside a mock-API panel (right); comparison table closes the page. */
+:root{
+  --page:#EEF1F4; --phone:#FFFFFF; --ink:#18212F; --ink-2:#5A6578; --ink-3:#8A93A3;
+  --line:#DDE2E8; --soft:#F3F5F8; --frame:#1D2532;
+  --tt:#0A77B5; --tt-ink:#FFFFFF; --tt-soft:#E6F2FA;
+  --news:#2F3A8F; --news-soft:#E9EBF8;
+  --porch:#B4560B; --porch-ink:#FFFFFF; --porch-soft:#FCEFE2;
+  --ok:#1B7A4B; --ok-soft:#E3F4EA; --err-soft:#FDECEC; --err-ink:#A12828; --warn-soft:#FFF4DB; --warn-ink:#7A5200;
+  --code-bg:#151B26; --code-ink:#D6DEEA; --code-dim:#7D8899;
+  --sans:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --page:#0F141B; --phone:#171D27; --ink:#E8ECF2; --ink-2:#A6B0BF; --ink-3:#768195;
+    --line:#2A3342; --soft:#1F2733; --frame:#2A3342;
+    --tt:#4DB2EA; --tt-ink:#04202F; --tt-soft:#11293A;
+    --news:#9AA6F5; --news-soft:#1E2445;
+    --porch:#F0A060; --porch-ink:#2A1300; --porch-soft:#3A2412;
+    --ok:#5FD39A; --ok-soft:#123323; --err-soft:#3D1A1A; --err-ink:#F3A3A3; --warn-soft:#3A2E10; --warn-ink:#F2CD7A;
+    --code-bg:#0B0F15; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#0F141B; --phone:#171D27; --ink:#E8ECF2; --ink-2:#A6B0BF; --ink-3:#768195;
+  --line:#2A3342; --soft:#1F2733; --frame:#2A3342;
+  --tt:#4DB2EA; --tt-ink:#04202F; --tt-soft:#11293A;
+  --news:#9AA6F5; --news-soft:#1E2445;
+  --porch:#F0A060; --porch-ink:#2A1300; --porch-soft:#3A2412;
+  --ok:#5FD39A; --ok-soft:#123323; --err-soft:#3D1A1A; --err-ink:#F3A3A3; --warn-soft:#3A2E10; --warn-ink:#F2CD7A;
+  --code-bg:#0B0F15; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+button{font:inherit;cursor:pointer;color:inherit}
+a{color:var(--tt)}
+code{font-family:var(--mono);font-size:.88em}
+:focus-visible{outline:2px solid var(--tt);outline-offset:2px}
+.sr{position:absolute;left:-9999px}
+
+.shell{max-width:1200px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+header.top h1{font-size:28px;font-weight:800;letter-spacing:-0.015em;margin:0 0 6px;text-wrap:balance}
+header.top p{margin:0;color:var(--ink-2);max-width:72ch}
+.internal{display:inline-block;font-size:12px;font-weight:700;color:var(--ink-2);background:var(--soft);border-radius:8px;padding:4px 10px;margin:0 0 12px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tt);margin:0 0 6px}
+
+.switch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:22px 0 24px}
+@media (max-width:720px){.switch{grid-template-columns:minmax(0,1fr)}}
+.switch button{border:1.5px solid var(--line);background:var(--phone);border-radius:14px;padding:12px 14px;text-align:left;display:flex;gap:12px;align-items:flex-start}
+.switch button[aria-selected="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
+.switch .k{font-weight:800;font-size:13px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--soft);flex-shrink:0}
+.switch button[aria-selected="true"] .k{background:var(--ink);color:var(--phone)}
+.switch .t{font-weight:700;font-size:14.5px;display:block;line-height:1.3}
+.switch .d{font-size:12.5px;color:var(--ink-2);display:block;margin-top:2px}
+.switch .rec{font-size:11px;font-weight:700;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:1px}
+
+.wrap{display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:32px;align-items:start}
+@media (max-width:920px){.wrap{grid-template-columns:minmax(0,1fr)}}
+
+/* phone */
+.device{background:var(--frame);border-radius:44px;padding:12px;max-width:390px;width:100%;margin:0 auto;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}
+@media (max-width:920px){.device{position:static}}
+.screen{background:var(--phone);border-radius:34px;overflow:hidden;height:760px;display:flex;flex-direction:column;position:relative}
+.status{display:flex;justify-content:space-between;padding:12px 26px 6px;font-size:13px;font-weight:600}
+.appbar{display:flex;align-items:center;gap:10px;padding:6px 16px 10px;border-bottom:1px solid var(--line)}
+.logo{font-weight:800;font-size:17px;letter-spacing:-0.02em}
+.logo.news{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--news);letter-spacing:-0.01em}
+.logo.porch{color:var(--porch)}
+.appbar .spacer{flex:1}
+.chip{font-size:12px;font-weight:600;background:var(--soft);color:var(--ink-2);border:0;border-radius:999px;padding:6px 10px}
+.restart{font-size:12px;font-weight:600;background:none;border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:var(--ink-2)}
+.view{flex:1;overflow-y:auto;padding:12px 14px 16px;scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){.view{scroll-behavior:auto}}
+.tabbar{display:flex;border-top:1px solid var(--line);background:var(--phone)}
+.tabbar span{flex:1;text-align:center;padding:10px 0 14px;font-size:12px;color:var(--ink-3);font-weight:500}
+.tabbar span.on{color:var(--ink);font-weight:700}
+
+/* chat */
+.msgs{display:flex;flex-direction:column;gap:10px}
+.bub{max-width:86%;padding:9px 12px;border-radius:16px;font-size:14px;line-height:1.4}
+.bub.me{align-self:flex-end;background:var(--porch);color:var(--porch-ink);border-bottom-right-radius:6px}
+.bub.bot{align-self:flex-start;background:var(--soft);border-bottom-left-radius:6px}
+.who{font-size:11px;font-weight:700;color:var(--ink-3);margin:2px 0 -6px 4px}
+.qa{align-self:flex-start;width:86%;border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:13px}
+.qa dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:4px 10px}
+.qa dt{color:var(--ink-3)} .qa dd{margin:0;font-weight:600}
+.diag{align-self:flex-start;width:92%;border:1.5px solid var(--porch);border-radius:16px;padding:12px;background:var(--phone)}
+.diag h4{margin:0 0 6px;font-size:14px}
+.diag .row{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:5px 0;border-top:1px solid var(--line)}
+.diag .row:first-of-type{border-top:0}
+.diag .row span:first-child{color:var(--ink-2)}
+.diag .row b{text-align:right}
+.typing{align-self:flex-start;background:var(--soft);border-radius:16px;padding:10px 14px;display:flex;gap:4px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--ink-3);animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion: reduce){.typing i{animation:none}}
+.replies{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.reply{border:1.5px solid var(--porch);color:var(--porch);background:var(--phone);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.reply.ghost{border-color:var(--line);color:var(--ink-2)}
+.tool{align-self:flex-start;font-family:var(--mono);font-size:11px;color:var(--ink-2);background:var(--phone);border:1px dashed var(--line);border-radius:10px;padding:6px 9px;max-width:92%;word-break:break-word}
+.tool b{color:var(--tt);font-weight:500}
+.disclose{align-self:flex-start;font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+
+/* pro cards */
+.attrib{font-size:11px;color:var(--ink-3)}
+.attrib b{color:var(--tt);font-weight:700}
+.pros{display:flex;flex-direction:column;gap:8px;align-self:stretch}
+.pro{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:var(--phone);text-align:left;width:100%}
+.pro:hover .p-name{text-decoration:underline}
+.avatar{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:14px;flex-shrink:0}
+.p-body{flex:1;min-width:0}
+.p-name{font-weight:700;font-size:14px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-meta{font-size:12.5px;color:var(--ink-2);margin:0}
+.star{color:#C98A00}
+.badge{font-size:10.5px;font-weight:700;color:var(--tt);background:var(--tt-soft);border-radius:6px;padding:1px 6px;margin-left:4px;vertical-align:1px}
+.p-price{font-size:12.5px;font-weight:700;text-align:right;white-space:nowrap}
+.p-price small{display:block;font-weight:500;color:var(--ink-3);font-size:11px}
+
+/* news */
+.kicker{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--news);margin:6px 0 4px}
+.kicker.alert{color:var(--err-ink)}
+.headline{font-family:var(--serif);font-weight:600;font-size:23px;line-height:1.18;margin:0 0 6px;text-wrap:balance}
+.dek{font-size:13.5px;color:var(--ink-2);margin:0 0 8px}
+.byline{font-size:11.5px;color:var(--ink-3);margin:0 0 10px}
+.hero{aspect-ratio:16/9;max-width:100%;border-radius:12px;margin-bottom:10px;display:grid;place-items:center}
+.hero svg{width:64px;height:64px}
+.article p.body{font-family:var(--serif);font-size:15.5px;line-height:1.5;margin:0 0 10px}
+.module{border-top:2px solid var(--ink);margin-top:14px;padding-top:10px}
+.module-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.module h3{font-size:15.5px;margin:0;line-height:1.3}
+.cats{display:flex;gap:6px;overflow-x:auto;margin:10px 0;padding-bottom:2px}
+.cat{border:1px solid var(--line);background:var(--phone);border-radius:999px;padding:6px 11px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.cat[aria-pressed="true"]{background:var(--ink);color:var(--phone);border-color:var(--ink)}
+.task{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line);align-items:center}
+.task:first-of-type{border-top:0}
+.task b{font-size:14px;display:block}
+.task span{font-size:12.5px;color:var(--ink-2)}
+.task .cost{font-size:12.5px;font-weight:700;white-space:nowrap;text-align:right}
+.linkbtn{background:none;border:0;color:var(--tt);font-weight:700;font-size:12.5px;padding:2px 0}
+.related{margin-top:16px;border-top:1px solid var(--line);padding-top:10px}
+.related p{margin:0 0 8px;font-family:var(--serif);font-size:14.5px}
+
+/* states */
+.state{border-radius:12px;padding:12px;font-size:13px}
+.state.empty{background:var(--soft);color:var(--ink-2)}
+.state.err{background:var(--err-soft);color:var(--err-ink)}
+.state.ok{background:var(--ok-soft);color:var(--ok)}
+.skel{height:58px;border-radius:12px;background:var(--soft);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.5}}
+@media (prefers-reduced-motion: reduce){.skel{animation:none}}
+
+/* sheet */
+.sheet-bg{position:absolute;inset:0;background:rgba(10,14,20,.45);display:flex;align-items:flex-end;z-index:5}
+.sheet{background:var(--phone);width:100%;border-radius:22px 22px 0 0;padding:16px 18px 22px;max-height:88%;overflow-y:auto}
+.sheet .grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 12px}
+.sheet .tt-bar{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--tt);margin-bottom:8px}
+.sheet h3{margin:0 0 4px;font-size:17px}
+.sub{font-size:13px;color:var(--ink-2);margin:0}
+.fields{margin:12px 0 0;display:flex;flex-direction:column;gap:8px}
+.field{border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.field div{font-size:14px;font-weight:600}
+.field .pf{font-size:10.5px;font-weight:700;color:var(--porch);margin-left:6px;text-transform:none;letter-spacing:0}
+.url{font-family:var(--mono);font-size:10.5px;background:var(--soft);border-radius:10px;padding:8px 10px;word-break:break-all;color:var(--ink-2);margin-top:10px}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:12px;font-weight:700;font-size:15px;margin-top:10px;text-align:center;text-decoration:none}
+.btn-tt{background:var(--tt);color:var(--tt-ink)}
+.btn-porch{background:var(--porch);color:var(--porch-ink)}
+.btn-ghost{background:var(--soft);color:var(--ink)}
+.btn[disabled]{opacity:.6;cursor:progress}
+
+/* panel */
+.panel{background:var(--phone);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}
+.panel h2{font-size:19px;margin:0 0 2px}
+.panel .hint{color:var(--ink-2);font-size:13.5px;margin:0 0 16px;max-width:70ch}
+.panel h3{font-size:13px;margin:20px 0 8px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
+.controls{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:6px}
+.ctl label,.ctl .lbl{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:4px}
+select,input[type=number]{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--phone);color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--phone);color:var(--ink-2);padding:7px 12px;font-size:13.5px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--phone);font-weight:600}
+.req{font-family:var(--mono);font-size:11.5px;line-height:1.55;background:var(--soft);border-radius:10px;padding:10px 12px;overflow-x:auto;white-space:pre;color:var(--ink-2);margin:0 0 10px;max-height:260px;overflow-y:auto}
+.req b{color:var(--tt);font-weight:500}
+textarea{width:100%;min-height:300px;font-family:var(--mono);font-size:12px;line-height:1.55;background:var(--code-bg);color:var(--code-ink);border:0;border-radius:12px;padding:14px;resize:vertical;tab-size:2}
+.row-actions{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.pbtn{border:1px solid var(--line);background:var(--phone);color:var(--ink);border-radius:10px;padding:8px 14px;font-weight:600;font-size:13.5px}
+.pbtn.main{background:var(--ink);color:var(--phone);border-color:var(--ink)}
+.msg{font-size:13px}
+.msg.ok{color:var(--ok)} .msg.bad{color:var(--err-ink)}
+.log ol{list-style:none;margin:0;padding:0;font-family:var(--mono);font-size:11.5px;max-height:190px;overflow-y:auto;background:var(--soft);border-radius:10px}
+.log li{padding:6px 10px;border-top:1px solid var(--line);color:var(--ink-2);word-break:break-word}
+.log li:first-child{border-top:0}
+.log li span{color:var(--tt)}
+.log li.none{color:var(--ink-3)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;font-size:13px;width:100%;min-width:440px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--ink-2);font-weight:600}
+td code{color:var(--tt);font-size:12px}
+.brief{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:620px){.brief{grid-template-columns:minmax(0,1fr)}}
+.brief div{background:var(--soft);border-radius:12px;padding:12px}
+.brief b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);margin-bottom:4px}
+.brief p{margin:0;font-size:13.5px}
+.note{font-size:12.5px;color:var(--ink-3);margin:8px 0 0}
+
+section.compare{margin-top:40px;background:var(--phone);border:1px solid var(--line);border-radius:18px;padding:20px}
+section.compare h2{font-size:19px;margin:0 0 4px}
+section.compare > p{margin:0 0 14px;color:var(--ink-2);max-width:72ch}
+section.compare td:first-child{font-weight:600;color:var(--ink-2)}
+section.compare th.on{color:var(--ink)}
+
+/* ---- partner brand layer (values come from partners/<slug>/partner.json) ---- */
+.screen[data-app="news"]{font-family:var(--news-font)}
+.screen[data-app="assistant"]{font-family:var(--assist-font)}
+.screen[data-app="news"] .status,.screen[data-app="news"] .appbar{background:var(--news-bar);color:var(--news-bar-ink)}
+.screen[data-app="news"] .appbar{border-bottom-color:transparent}
+.screen[data-app="news"] .appbar .chip{background:var(--news-bar-chip);color:var(--news-bar-ink)}
+.screen[data-app="news"] .appbar .restart{border-color:var(--news-bar-chip);color:var(--news-bar-ink)}
+.logo.news{font-family:var(--news-logo-font);font-weight:var(--news-logo-weight);color:var(--news-bar-ink);font-size:20px;letter-spacing:-0.01em}
+.headline{font-family:var(--news-headline-font)}
+.article p.body{font-family:var(--news-body-font)}
+.related p{font-family:var(--news-body-font)}
+.screen[data-app="news"] .tabbar span.on{color:var(--news)}
+.screen[data-app="news"] .module{border-top-color:var(--news)}
+.screen[data-app="news"] .cat[aria-pressed="true"]{background:var(--news);border-color:var(--news);color:var(--news-on)}
+.logo.porch{font-family:var(--assist-font);font-weight:700;color:var(--assist-logo)}
+.screen[data-app="assistant"] .tabbar span.on{color:var(--porch)}
+.bub.me{background:var(--assist-me);color:var(--assist-me-ink)}
+.reply{border-radius:var(--assist-radius)}
+.btn-porch{background:var(--assist-cta);color:var(--assist-cta-ink);border-radius:var(--assist-radius)}
+.diag{border-color:var(--porch)}
+:root{--news:#DE3232;--news-on:#FFFFFF;--news-soft:#FFECEC;--news-bar:#FF5A5A;--news-bar-ink:#FFFFFF;--news-bar-chip:rgba(255,255,255,.22);--news-font:"Roboto", system-ui, sans-serif;--news-logo-font:"Roboto", system-ui, sans-serif;--news-logo-weight:900;--news-headline-font:"Roboto", system-ui, sans-serif;--news-body-font:"Roboto", system-ui, sans-serif;--porch:#FF5A1F;--porch-ink:#FFFFFF;--porch-soft:#FFF1EA;--assist-font:"Rubik", system-ui, sans-serif;--assist-logo:#1F1F1F;--assist-me:#1F1F1F;--assist-me-ink:#FFFFFF;--assist-cta:#111111;--assist-cta-ink:#FFFFFF;--assist-radius:999px;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--news:#FF6B6B;--news-on:#1A0606;--news-soft:#3A1616;--news-bar:#C93232;--news-bar-ink:#FFFFFF;--news-bar-chip:rgba(255,255,255,.2);--porch:#FF8A5C;--porch-ink:#2A0F02;--porch-soft:#3A1D10;--assist-logo:#EDEDED;--assist-me:#EDEDED;--assist-me-ink:#121212;--assist-cta:#F2F2F2;--assist-cta-ink:#111111;}}
+:root[data-theme="dark"]{--news:#FF6B6B;--news-on:#1A0606;--news-soft:#3A1616;--news-bar:#C93232;--news-bar-ink:#FFFFFF;--news-bar-chip:rgba(255,255,255,.2);--porch:#FF8A5C;--porch-ink:#2A0F02;--porch-soft:#3A1D10;--assist-logo:#EDEDED;--assist-me:#EDEDED;--assist-me-ink:#121212;--assist-cta:#F2F2F2;--assist-cta-ink:#111111;}
+</style>
+
+<div class="shell">
+  <header class="top">
+    <p class="internal">Concept mockup by Thumbtack · not a NewsBreak product · screens are illustrative</p>
+    <p class="eyebrow">Thumbtack Partner Platform · NewsBreak (Particle Media) concept prototype</p>
+    <h1>Thumbtack inside NewsBreak and Nearby AI</h1>
+    <p>Three ways NewsBreak could plug Thumbtack into NewsBreak and Nearby AI. Screens are styled after the partner's apps to show fit; they are a Thumbtack sketch, not the partner's real design. Each phone renders from the mock API response on the right, so you can edit the JSON, change ZIP codes, and force empty or error states.</p>
+  </header>
+
+  <div class="switch" role="tablist" aria-label="Integration options">
+    <button role="tab" id="tab-a" data-opt="a" aria-selected="true" aria-controls="stage"><span class="k">A</span><span><span class="t">Coverage-gap referral<span class="rec">Lead pilot</span></span><span class="d">Nia can't match a pro, so it offers Thumbtack pros with the project already filled in.</span></span></button>
+    <button role="tab" id="tab-b" data-opt="b" aria-selected="false" aria-controls="stage"><span class="k">B</span><span><span class="t">Pros beside local stories</span><span class="d">A ZIP-aware module under NewsBreak storm, seasonal and renovation stories.</span></span></button>
+    <button role="tab" id="tab-c" data-opt="c" aria-selected="false" aria-controls="stage"><span class="k">C</span><span><span class="t">AI assistant via Thumbtack MCP</span><span class="d">Nia calls Thumbtack as a tool and books inside the conversation.</span></span></button>
+  </div>
+
+  <div class="wrap" id="stage" role="tabpanel" aria-labelledby="tab-a">
+    <div>
+      <div class="device">
+        <div class="screen" id="screen">
+          <div class="status"><span>9:41</span><span>5G</span></div>
+          <div class="appbar" id="appbar"></div>
+          <main class="view" id="view" aria-live="polite"></main>
+          <nav class="tabbar" id="tabbar" aria-hidden="true"></nav>
+        </div>
+      </div>
+    </div>
+
+    <section class="panel" aria-labelledby="pTitle">
+      <h2 id="pTitle"></h2>
+      <p class="hint" id="pHint"></p>
+      <div class="controls" id="controls"></div>
+
+      <h3>Request</h3>
+      <div class="req" id="reqLine">Waiting for the first call…</div>
+
+      <h3 id="jsonTitle">Mock response</h3>
+      <label for="json" class="sr">Mock response JSON</label>
+      <textarea id="json" spellcheck="false"></textarea>
+      <div class="row-actions">
+        <button class="pbtn main" id="applyBtn">Apply and replay</button>
+        <button class="pbtn" id="resetBtn">Reset mock</button>
+        <span class="msg" id="jsonMsg" role="status"></span>
+      </div>
+
+      <div class="log">
+        <h3>Event log</h3>
+        <ol id="log"></ol>
+      </div>
+
+      <h3>What renders from where</h3>
+      <div class="tablewrap"><table><thead><tr><th>On screen</th><th>Source</th></tr></thead><tbody id="mapping"></tbody></table></div>
+
+      <h3>Why this option</h3>
+      <div class="brief" id="brief"></div>
+      <p class="note">Colors and fonts approximated from newsbreak.com and nearby.ai on 2026-11-11. Not official brand assets. Endpoint paths follow the Thumbtack Partner Platform docs. Response fields and MCP tool names in this mock are illustrative; confirm exact schemas in the developer portal before build.</p>
+    </section>
+  </div>
+
+  <section class="compare" aria-labelledby="cmpTitle">
+    <h2 id="cmpTitle">The three options side by side</h2>
+    <p>Start with A: it serves demand Nearby already loses, so it never competes with Nearby's own paid-lead pros, and it needs the least engineering. A good pilot read-out earns the room to try B and C.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th data-col="a">A · Coverage-gap referral</th><th data-col="b">B · Story modules</th><th data-col="c">C · MCP assistant</th></tr></thead>
+        <tbody>
+          <tr><td>Entry point</td><td>Failed match in Nearby AI</td><td>Home-related story or alert</td><td>Nia conversation, chat or “Call Nia”</td></tr>
+          <tr><td>Reach</td><td>Nearby's unserved requests only</td><td>40M+ monthly readers, by ZIP</td><td>Assistant conversations</td></tr>
+          <tr><td>Intent per impression</td><td>Very high</td><td>Low to medium</td><td>High</td></tr>
+          <tr><td>Conflict with Nearby's paid pros</td><td>None</td><td>None</td><td>Needs design</td></tr>
+          <tr><td>Thumbtack surfaces</td><td>Find Pros search-filtered, Request Flow widget or Requests API</td><td>Categories, Pro List and Service Page widgets</td><td>MCP Search Pros toolset (Preset Jobs later)</td></tr>
+          <tr><td>Precedent</td><td>Nextdoor, OfferUp</td><td>Nextdoor newsfeed cards</td><td>ChatGPT, Alexa+</td></tr>
+          <tr><td>Effort</td><td>Low to medium</td><td>Medium</td><td>Medium</td></tr>
+          <tr><td>Time to first data (estimate)</td><td>4–6 weeks</td><td>8–12 weeks</td><td>6–10 weeks</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var view = $("view"), screen = $("screen");
+  var UTM = "utm_source=cma-newsbreak-demo&utm_medium=partnership";
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+  function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+  var ZIPS = {
+    "94040": { city:"Mountain View", st:"ca", label:"94040 · Mountain View, CA" },
+    "30307": { city:"Atlanta", st:"ga", label:"30307 · Atlanta, GA" },
+    "59001": { city:"Absarokee", st:"mt", label:"59001 · Absarokee, MT (no pros)" }
+  };
+  var seq = 4820193847;
+  function pro(zip, cat, name, rating, reviews, top, from, resp, extra){
+    var z = ZIPS[zip]; var id = "4759999269218" + String(seq++).slice(-6);
+    var o = { businessID:id, businessName:name, rating:rating, numberOfReviews:reviews, isTopPro:top, startingPrice:from, responseTimeHours:resp,
+      widgets:{
+        servicePageURL:"https://www.thumbtack.com/" + z.st + "/" + slug(z.city) + "/" + slug(cat) + "/" + slug(name) + "/service/" + id + "?" + UTM,
+        requestFlowURL:"https://www.thumbtack.com/embed/request-flow?business_pk=" + id + "&zip_code=" + zip + "&" + UTM
+      } };
+    if (extra) for (var k in extra) o[k] = extra[k];
+    return o;
+  }
+  var PALETTE = [["#E3F3F0","#0B5E52"],["#E6F2FA","#0A5A8A"],["#F4ECFB","#5B2E8C"],["#FFF1E3","#8A4B0A"],["#EDF1F5","#3A4656"]];
+  function avatar(name){
+    var parts = String(name).replace(/[^A-Za-z0-9 ]/g,"").split(/\s+/).filter(Boolean);
+    var ini = ((parts[0]||"?")[0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
+    var h = 0; for (var i=0;i<name.length;i++) h = (h*31 + name.charCodeAt(i)) >>> 0;
+    var c = PALETTE[h % PALETTE.length];
+    return '<div class="avatar" aria-hidden="true" style="background:'+c[0]+';color:'+c[1]+'">'+esc(ini)+'</div>';
+  }
+  function proCard(p, dataAttr, priceHTML){
+    return '<button class="pro" '+dataAttr+'="'+esc(p.businessID)+'">' + avatar(p.businessName) +
+      '<div class="p-body"><p class="p-name">'+esc(p.businessName)+(p.isTopPro?'<span class="badge">Top Pro</span>':'')+'</p>' +
+      '<p class="p-meta"><span class="star">★</span> '+esc(Number(p.rating).toFixed(1))+' ('+esc(p.numberOfReviews)+' reviews)</p>' +
+      '<p class="p-meta">Responds in about '+esc(p.responseTimeHours)+' hr</p></div>' +
+      (priceHTML || '<div class="p-price">From $'+esc(p.startingPrice)+'<small>starting price</small></div>') + '</button>';
+  }
+  function skel(n){ var s=""; for (var i=0;i<n;i++) s += '<div class="skel" aria-hidden="true"></div>'; return s; }
+  function typing(){ return '<div class="typing" aria-label="Nia is typing"><i></i><i></i><i></i></div>'; }
+  function scrollEnd(){ requestAnimationFrame(function(){ view.scrollTop = view.scrollHeight; }); }
+
+  /* ------------ shared mock transport ------------ */
+  function mockCall(opt, producer){
+    return new Promise(function(resolve, reject){
+      setTimeout(function(){
+        if (opt.s.mode === "error") { reject({ status:503, title:"Service Unavailable", detail:"Upstream timeout", traceID:"mock-" + Date.now() }); return; }
+        try { resolve(clone(producer())); } catch (e) { reject({ status:"invalid", detail:String(e.message || e) }); }
+      }, opt.s.latency);
+    });
+  }
+  function setReq(html){ $("reqLine").innerHTML = html; }
+  function jsonBlock(o){ return esc(JSON.stringify(o, null, 2)); }
+
+  var logs = { a:[], b:[], c:[] };
+  var cur = "a";
+  function log(key, name, detail){
+    var t = new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    logs[key].unshift({ t:t, name:name, detail:detail || "" });
+    if (logs[key].length > 50) logs[key].pop();
+    if (key === cur) drawLog();
+  }
+  function drawLog(){
+    var items = logs[cur];
+    $("log").innerHTML = items.length ? items.map(function(e){ return '<li>'+esc(e.t)+' <span>'+esc(e.name)+'</span> '+esc(e.detail)+'</li>'; }).join("") : '<li class="none">No events yet.</li>';
+  }
+
+  /* ------------ sheet ------------ */
+  var closeSheet = null;
+  function openSheet(html, onClick, onClose){
+    if (closeSheet) closeSheet(true);
+    var bg = document.createElement("div");
+    bg.className = "sheet-bg";
+    bg.innerHTML = '<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="grab"></div>' + html + '</div>';
+    screen.appendChild(bg);
+    var first = bg.querySelector("button, a"); if (first) first.focus();
+    function onKey(e){ if (e.key === "Escape") close(); }
+    function close(silent){ bg.remove(); document.removeEventListener("keydown", onKey); closeSheet = null; if (!silent && onClose) onClose(); }
+    closeSheet = close;
+    document.addEventListener("keydown", onKey);
+    bg.addEventListener("click", function(e){
+      if (e.target === bg || e.target.closest("[data-close]")) { close(); return; }
+      if (onClick) onClick(e, close, bg);
+    });
+    return bg;
+  }
+  var TT_BAR = '<div class="tt-bar"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><path d="M7 8h10M12 8v9" style="stroke:var(--phone)" stroke-width="2.4" stroke-linecap="round"/></svg>Thumbtack</div>';
+
+  /* =========================================================
+     OPTION A · coverage-gap referral
+     ========================================================= */
+  var A_ANSWERS = [
+    { q:"Where is the leak?", a:"Under the kitchen sink" },
+    { q:"How fast is it dripping?", a:"Steady, about a cup an hour" },
+    { q:"Can you shut the water off there?", a:"Yes, the valve works" },
+    { q:"When do you need it fixed?", a:"This week" },
+    { q:"Home type", a:"Single-family, owned" },
+    { q:"Photos", a:"2 attached" }
+  ];
+  var A_GAPS = {
+    no_pro_zip: { label:"No Nearby pro in ZIP", reason:"no_pro_in_zip", pip:"I don't have a pro I can vouch for in {zip} yet." },
+    timeout: { label:"No response in 10 min", reason:"no_response_10m", pip:"None of my pros near {zip} responded in time." },
+    category: { label:"Category not offered", reason:"category_not_offered", pip:"Nearby doesn't cover this kind of repair yet." },
+    matched: { label:"Matched (no gap)", reason:null, pip:"" }
+  };
+  function aDefaults(){
+    return {
+      "94040": { data:[
+        pro("94040","Plumbing","Bayline Plumbing & Drain",4.9,213,true,95,1),
+        pro("94040","Plumbing","Castro Street Plumbers",4.8,141,true,110,2),
+        pro("94040","Plumbing","Ruiz Family Plumbing",4.8,88,false,85,1),
+        pro("94040","Plumbing","Peninsula Leak Fixers",4.6,52,false,120,3)
+      ]},
+      "30307": { data:[
+        pro("30307","Plumbing","Little Five Points Plumbing",4.9,176,true,90,1),
+        pro("30307","Plumbing","Candler Park Pipe Co.",4.7,64,false,100,2)
+      ]},
+      "59001": { data:[] }
+    };
+  }
+  var A = {
+    key:"a",
+    title:"Option A · Coverage-gap referral",
+    hint:"Nia has scoped the job but no Nearby pro can take it. Nia calls Find Pros with its answers, then offers the results in the same chat. When Nearby can match, Thumbtack never appears.",
+    jsonTitle:"Mock response · POST /api/v4/businesses/search-filtered",
+    s:{ zip:"94040", gap:"no_pro_zip", mode:"ok", latency:700, step:"idle", pros:[], run:0 },
+    mocks:aDefaults(),
+    controls: function(){
+      var z = Object.keys(ZIPS).map(function(k){ return '<option value="'+k+'"'+(k===A.s.zip?' selected':'')+'>'+esc(ZIPS[k].label)+'</option>'; }).join("");
+      var g = Object.keys(A_GAPS).map(function(k){ return '<option value="'+k+'"'+(k===A.s.gap?' selected':'')+'>'+esc(A_GAPS[k].label)+'</option>'; }).join("");
+      return ctlZip("a-zip", z) +
+        '<div class="ctl"><label for="a-gap">Nearby match result</label><select id="a-gap">'+g+'</select></div>' + ctlMode("a") + ctlLatency("a-lat", A.s.latency);
+    },
+    bind: function(){
+      $("a-zip").onchange = function(){ A.s.zip = this.value; showJson(); A.start(); };
+      $("a-gap").onchange = function(){ A.s.gap = this.value; A.start(); };
+      bindMode(A); bindLatency("a-lat", A);
+    },
+    getMock: function(){ return A.mocks[A.s.zip] || { data:[] }; },
+    setMock: function(b){ A.mocks[A.s.zip] = b; },
+    resetMocks: function(){ A.mocks = aDefaults(); },
+    validate: validatePros,
+    mapping:[
+      ["Diagnosis card, Nia's six answers","Nearby (NewsBreak side), sent as <code>projectMetadata</code>"],
+      ["“Thumbtack has 4 top-rated plumbers”","<code>data.length</code> from search-filtered"],
+      ["Pro cards","<code>businessName</code>, <code>rating</code>, <code>numberOfReviews</code>, <code>isTopPro</code>, <code>startingPrice</code>"],
+      ["Pre-filled request sheet","Request Flow widget (<code>widgets.requestFlowURL</code>) or <code>POST /api/v4/requests</code>"],
+      ["Attribution and payout","<code>utm_source</code> on every call; pay per accepted incremental request, net of refunds"]
+    ],
+    brief:[
+      ["NewsBreak gets","Revenue on demand it drops today, with no new pro recruiting. The homeowner stays in Nearby until the job is placed."],
+      ["Thumbtack gets","Pre-scoped requests from people actively looking for help, in markets where Nearby is thin."],
+      ["Precedent","Nextdoor and OfferUp embed Find Pros and widgets. Here the trigger is a failed match, so Thumbtack is the fallback and never competes for the same request."],
+      ["Effort: low to medium","Two API calls and one widget. The real work is defining a coverage gap and agreeing the commercial terms."]
+    ],
+    metadata: function(){
+      return { source:"nearby_nia", gapReason:A_GAPS[A.s.gap].reason, urgency:"this_week",
+        aiEstimate:{ min:150, max:275, currency:"USD" },
+        answers:A_ANSWERS.map(function(x){ return { question:x.q, answer:x.a }; }) };
+    },
+    start: function(){
+      if (closeSheet) closeSheet(true);
+      var run = ++A.s.run; A.s.step = "checking"; A.s.pros = []; A.s.chosen = null; A.s.offerLogged = false;
+      log("a","session_start","zip="+A.s.zip+" scenario="+A.s.gap);
+      A.render();
+      setTimeout(function(){
+        if (run !== A.s.run) return;
+        if (A.s.gap === "matched") { A.s.step = "matched"; log("a","nearby_match","served by Nearby; no Thumbtack call"); setReq("No Thumbtack call. Nearby matched its own pro, so the referral never fires."); A.render(); return; }
+        A.search(run);
+      }, 900);
+    },
+    search: function(run){
+      A.s.step = "searching"; A.render();
+      var body = { zipCode:A.s.zip, userQuery:"Leak under kitchen sink, steady drip, shutoff valve works", categoryHint:"Plumbing", projectMetadata:A.metadata(), limit:10, utm_source:"cma-newsbreak-demo" };
+      setReq('<b>POST</b> /api/v4/businesses/search-filtered\n' + jsonBlock(body));
+      log("a","request","POST search-filtered zipCode="+A.s.zip+" gapReason="+A_GAPS[A.s.gap].reason);
+      var t0 = performance.now();
+      mockCall(A, A.getMock).then(function(res){
+        if (run !== A.s.run) return;
+        var errs = validatePros(res); if (errs.length) throw { status:"invalid", detail:errs[0] };
+        A.s.pros = res.data.slice().sort(function(x,y){ return (y.isTopPro - x.isTopPro) || (y.rating - x.rating); });
+        log("a","response 200", res.data.length + " pros, " + Math.round(performance.now()-t0) + " ms");
+        A.s.step = A.s.pros.length ? "offer" : "none"; A.render();
+      }).catch(function(err){
+        if (run !== A.s.run) return;
+        log("a","response " + (err.status||"error"), (err.detail||"") + " · Nia falls back quietly");
+        A.s.step = "none"; A.render();
+      });
+    },
+    render: function(){
+      var zipTxt = A.s.zip, s = A.s, gap = A_GAPS[s.gap];
+      $("appbar").innerHTML = '<span class="logo porch">Nearby AI</span><span class="spacer"></span><span class="chip">'+esc(zipTxt)+'</span><button class="restart" data-restart>Restart</button>';
+      $("tabbar").innerHTML = '<span class="on">Ask Nia</span><span>Projects</span><span>Account</span>';
+      var h = '<div class="msgs">';
+      h += '<div class="bub me">My kitchen sink is leaking under the cabinet.</div>';
+      h += '<p class="who">Nia</p><div class="bub bot">Let\'s figure it out. I asked a few quick questions:</div>';
+      h += '<div class="qa"><dl>' + A_ANSWERS.slice(0,4).map(function(x){ return '<dt>'+esc(x.q)+'</dt><dd>'+esc(x.a)+'</dd>'; }).join("") + '</dl><p class="sub" style="margin-top:6px">+2 more answers</p></div>';
+      h += '<div class="diag"><h4>Nia\'s read</h4>' +
+        '<div class="row"><span>Likely cause</span><b>Loose slip nut or worn P-trap washer</b></div>' +
+        '<div class="row"><span>Urgency</span><b>Fix this week</b></div>' +
+        '<div class="row"><span>Fair price near '+esc(zipTxt)+'</span><b>$150–$275</b></div></div>';
+      h += '<div class="bub bot">You approve any pro before they can contact you. Checking who can take this…</div>';
+      if (s.step === "checking" || s.step === "searching") h += typing();
+      if (s.step === "matched") {
+        h += '<div class="bub bot">Good news: Dana Ortiz Plumbing covers '+esc(zipTxt)+' and can come Thursday. Want me to send your details?</div>';
+        h += '<div class="replies"><button class="reply">Yes, send them</button><button class="reply ghost">Not yet</button></div>';
+        h += '<div class="state empty">Nearby served this request itself. No Thumbtack call was made.</div>';
+      }
+      if (s.step === "none") {
+        h += '<div class="bub bot">'+esc(gap.pip.replace("{zip}", zipTxt))+' I\'ll keep looking and message you the moment someone is available.</div>';
+        h += '<div class="state empty">No Thumbtack offer: zero results or an error. Nia never shows an empty or broken referral.</div>';
+      }
+      if (s.step === "offer" || s.step === "results" || s.step === "declined" || s.step === "sent") {
+        if (!s.offerLogged) { s.offerLogged = true; log("a","referral_offer_shown","pros="+s.pros.length+" gapReason="+gap.reason); }
+        h += '<div class="bub bot">'+esc(gap.pip.replace("{zip}", zipTxt))+' Thumbtack has '+s.pros.length+' top-rated plumber'+(s.pros.length===1?'':'s')+' near '+esc(zipTxt)+'. Want to see them? Your answers carry over.</div>';
+        if (s.step === "offer") h += '<div class="replies"><button class="reply" data-a="yes">Show Thumbtack pros</button><button class="reply ghost" data-a="no">No thanks</button></div>';
+      }
+      if (s.step === "declined") h += '<div class="bub me">No thanks</div><div class="bub bot">No problem. I\'ll keep looking for a Nearby pro.</div>';
+      if (s.step === "results" || s.step === "sent") {
+        h += '<div class="bub me">Show Thumbtack pros</div>';
+        h += '<div class="pros"><span class="attrib">Pros from <b>Thumbtack</b> · sorted by Top Pro, then rating</span>' + s.pros.map(function(p){ return proCard(p, "data-apro"); }).join("") + '</div>';
+      }
+      if (s.step === "sent" && s.chosen) {
+        h += '<div class="bub bot">Sent to '+esc(s.chosen.businessName)+'. They usually reply within '+esc(s.chosen.responseTimeHours)+' hour'+(s.chosen.responseTimeHours===1?'':'s')+'. You\'ll see their reply here and in Thumbtack.</div>';
+        h += '<div class="state ok">Request '+esc(s.requestID)+' placed. Nothing was retyped.</div>';
+      }
+      h += '</div>';
+      view.innerHTML = h; scrollEnd();
+    },
+    click: function(e){
+      var y = e.target.closest("[data-a]");
+      if (y) {
+        if (y.dataset.a === "yes") { A.s.step = "results"; log("a","referral_accepted","pros="+A.s.pros.length); A.s.pros.forEach(function(p,i){ log("a","pro_card_impression","position="+(i+1)+" business="+p.businessID); }); }
+        else { A.s.step = "declined"; log("a","referral_declined",""); }
+        A.render(); return;
+      }
+      var c = e.target.closest("[data-apro]");
+      if (c && A.s.step === "results") { var p = A.s.pros.filter(function(x){ return x.businessID === c.dataset.apro; })[0]; if (p) A.sheet(p); }
+    },
+    sheet: function(p){
+      log("a","pro_card_click","business="+p.businessID);
+      var md = A.metadata();
+      var html = TT_BAR + '<h3 id="sheetTitle">Request '+esc(p.businessName)+'</h3><p class="sub">Plumbing · '+esc(A.s.zip)+' · <span class="star">★</span> '+esc(p.rating)+' ('+esc(p.numberOfReviews)+')</p>' +
+        '<div class="fields">' +
+        '<div class="field"><label>Job<span class="pf">from Nia</span></label><div>Leak under kitchen sink</div></div>' +
+        '<div class="field"><label>Details<span class="pf">from Nia</span></label><div>'+esc(md.answers[1].answer)+'; '+esc(md.answers[2].answer.toLowerCase())+'</div></div>' +
+        '<div class="field"><label>When<span class="pf">from Nia</span></label><div>This week</div></div>' +
+        '<div class="field"><label>Photos<span class="pf">from Nia</span></label><div>2 attached</div></div>' +
+        '</div>' +
+        '<p class="sub" style="margin-top:10px">Your number is shared only with the pro you send this to.</p>' +
+        '<button class="btn btn-tt" data-send>Send request</button><button class="btn btn-ghost" data-close>Back to pros</button>';
+      openSheet(html, function(e, close, bg){
+        var b = e.target.closest("[data-send]"); if (!b) return;
+        b.disabled = true; b.textContent = "Sending…";
+        var body = { businessID:p.businessID, zipCode:A.s.zip, categoryName:"Plumbing", details:"Leak under kitchen sink. " + md.answers[1].answer + ".", projectMetadata:md, utm_source:"cma-newsbreak-demo" };
+        setReq('<b>POST</b> /api/v4/requests\n' + jsonBlock(body));
+        log("a","request","POST requests business="+p.businessID);
+        var run = A.s.run;
+        mockCall(A, function(){ return { requestID:"req_" + Math.floor(Math.random()*9e8+1e8), status:"sent" }; }).then(function(res){
+          if (run !== A.s.run) return;
+          A.s.requestID = res.requestID; A.s.chosen = p; A.s.step = "sent";
+          log("a","request_submitted","request="+res.requestID+" business="+p.businessID+" "+UTM);
+          close(true); A.render();
+        }).catch(function(err){
+          log("a","response " + (err.status||"error"), err.detail||"");
+          b.disabled = false; b.textContent = "Try again";
+          var m = bg.querySelector(".sheet .send-err"); if (!m) { m = document.createElement("div"); m.className = "state err send-err"; m.style.marginTop = "10px"; bg.querySelector(".sheet").appendChild(m); }
+          m.textContent = "That didn't send. Your answers are saved, so try again.";
+        });
+      });
+    }
+  };
+
+  /* =========================================================
+     OPTION B · story modules
+     ========================================================= */
+  var B_STORIES = {
+    storm: { kind:"alert", kicker:"Weather alert", title:"Thunderstorm brings 60 mph gusts to Mountain View", dek:"Downed limbs reported on Grant Road. Power restored to most of Waverly Park by 9 p.m.", tag:"storm",
+      topic:["Roof Repair","Gutter Repair","Tree Trimming and Removal"], prompt:"Roof, gutter or tree damage?",
+      body:["Wind gusts reached 61 mph at Moffett Field late Tuesday, the strongest since February, according to the National Weather Service.","City crews cleared 14 fallen trees overnight. Residents should photograph damage before cleanup for insurance claims."],
+      hue:["#DCE3F2","#5767A8"] },
+    freeze: { kind:"seasonal", kicker:"Seasonal", title:"First frost expected Thursday night across the Peninsula", dek:"Lows near 31°F in valley neighborhoods. Cover sensitive plants and protect exposed pipes.", tag:"seasonal",
+      body:["Forecasters expect the first frost of the season after a dry, clear week. Hillside areas may stay a few degrees warmer.","Hose bibs and irrigation backflow valves are most at risk. Most homes in the area have no freeze protection on outdoor plumbing."],
+      hue:["#E2EEF5","#3E7B9C"] },
+    remodel: { kind:"news", kicker:"Real estate", title:"Kitchen remodels lead home-project permits this fall", dek:"Mountain View issued 212 kitchen permits from August to October, up 18% on last year.", tag:"renovation",
+      topic:["Kitchen Remodeling","Cabinet Installation","Countertop Installation"], prompt:"Planning a kitchen project?",
+      body:["Kitchen work made up a third of residential permits filed with the city this quarter, ahead of bathrooms and ADUs.","Contractors say lead times have eased since spring, with most mid-size remodels starting within six weeks."],
+      hue:["#F1E9DF","#8A5A2B"] },
+    council: { kind:"news", kicker:"City hall", title:"Council approves downtown parking changes", dek:"Two-hour limits on Castro Street end in January; new paid lots open near the transit center.", tag:null,
+      body:["The vote passed 5–2 after three hours of public comment.","The changes take effect January 6, with free parking on weekends through March."],
+      hue:["#E6E8EC","#59606E"] }
+  };
+  function bDefaults(){
+    var z = {};
+    Object.keys(ZIPS).forEach(function(k){
+      z[k] = {
+        popular: { data: k === "59001" ? [] : [
+          { categoryID:"cat_101", categoryName:"House Cleaning", rank:1 },
+          { categoryID:"cat_118", categoryName:"Roof Repair", rank:2 },
+          { categoryID:"cat_131", categoryName:"Tree Trimming and Removal", rank:3 },
+          { categoryID:"cat_140", categoryName:"Kitchen Remodeling", rank:4 },
+          { categoryID:"cat_152", categoryName:"Gutter Repair", rank:5 },
+          { categoryID:"cat_163", categoryName:"Cabinet Installation", rank:6 },
+          { categoryID:"cat_177", categoryName:"Handyman", rank:7 }
+        ]},
+        homecare: { data: k === "59001" ? [] : [
+          { taskName:"Insulate outdoor faucets", description:"Fit foam covers and shut off exterior valves before the first frost.", categoryName:"Plumbing", averageCost:{ min:85, max:160 } },
+          { taskName:"Clean gutters", description:"Clear leaves so winter rain drains away from the foundation.", categoryName:"Gutter Cleaning", averageCost:{ min:120, max:240 } },
+          { taskName:"Furnace tune-up", description:"Check burners, filters and carbon monoxide levels before heavy use.", categoryName:"Heating and Furnace Repair", averageCost:{ min:90, max:180 } },
+          { taskName:"Winterize irrigation", description:"Blow out lines and protect the backflow valve.", categoryName:"Sprinkler System Repair", averageCost:{ min:75, max:150 } }
+        ]}
+      };
+    });
+    return z;
+  }
+  var B_NAMES = ["Summit","Cornerstone","Evergreen","Bluebird","Keystone","Harbor","Oak & Iron","Northside","Lantern","Redwood"];
+  function bPros(zip, cat){
+    if (zip === "59001") return [];
+    var h = 0; for (var i=0;i<cat.length;i++) h = (h*17 + cat.charCodeAt(i)) >>> 0;
+    var noun = cat.split(" ")[0];
+    return [0,1,2].map(function(i){
+      var n = B_NAMES[(h + i*3) % B_NAMES.length] + " " + noun + (i===1?" Co.":i===2?" Pros":" Services");
+      return pro(zip, cat, n, [4.9,4.8,4.7][i], [184,97,61][(h+i)%3], i<2, [150,95,120][(h+i)%3], [1,2,1][i]);
+    });
+  }
+  var B = {
+    key:"b",
+    title:"Option B · Pros beside local stories",
+    hint:"The story's topic tag picks categories, which are ranked by what is popular in the reader's ZIP. Untagged stories get no module. Nothing opens until the reader taps.",
+    jsonTitle:"Mock response · GET /api/v4/categories/…",
+    s:{ zip:"94040", story:"storm", mode:"ok", latency:600, status:"idle", cats:[], cat:null, pros:[], tasks:[], run:0 },
+    mocks:bDefaults(),
+    controls: function(){
+      var z = Object.keys(ZIPS).map(function(k){ return '<option value="'+k+'"'+(k===B.s.zip?' selected':'')+'>'+esc(ZIPS[k].label)+'</option>'; }).join("");
+      var st = [["storm","Storm alert"],["freeze","First frost (seasonal)"],["remodel","Kitchen permits story"],["council","Parking story (no home tag)"]]
+        .map(function(o){ return '<option value="'+o[0]+'"'+(o[0]===B.s.story?' selected':'')+'>'+o[1]+'</option>'; }).join("");
+      return ctlZip("b-zip", z) + '<div class="ctl"><label for="b-story">Story</label><select id="b-story">'+st+'</select></div>' + ctlMode("b") + ctlLatency("b-lat", B.s.latency);
+    },
+    bind: function(){
+      $("b-zip").onchange = function(){ B.s.zip = this.value; showJson(); B.start(); };
+      $("b-story").onchange = function(){ B.s.story = this.value; showJson(); B.start(); };
+      bindMode(B); bindLatency("b-lat", B);
+    },
+    which: function(){ return B_STORIES[B.s.story].tag === "seasonal" ? "homecare" : "popular"; },
+    getMock: function(){ return B.mocks[B.s.zip][B.which()]; },
+    setMock: function(b){ B.mocks[B.s.zip][B.which()] = b; },
+    resetMocks: function(){ B.mocks = bDefaults(); },
+    validate: function(body){
+      if (!body || !Array.isArray(body.data)) return ["Top-level object needs a data array."];
+      var errs = [];
+      body.data.forEach(function(c, i){
+        if (B.which() === "homecare") {
+          if (typeof c.taskName !== "string") errs.push("data["+i+"].taskName must be a string");
+          if (!c.averageCost || typeof c.averageCost.min !== "number" || typeof c.averageCost.max !== "number") errs.push("data["+i+"].averageCost needs numeric min and max");
+        } else if (typeof c.categoryName !== "string") errs.push("data["+i+"].categoryName must be a string");
+      });
+      return errs;
+    },
+    mapping:[
+      ["Module shown or hidden","Story topic tag (NewsBreak side). No tag, or no overlap with popular categories, means no module"],
+      ["Category chips and their order","<code>GET /api/v4/categories/recommendations?zipCode=&amp;recommendationType=popular</code>, filtered to the tag's categories"],
+      ["Pro cards","Pro List widget or Find Pros for the selected category"],
+      ["Home care this month","<code>GET /api/v4/categories/homecare?zipCode=&amp;propertyType=</code> · <code>taskName</code>, <code>averageCost</code>"],
+      ["Pro detail sheet","Service Page widget (<code>widgets.servicePageURL</code>)"]
+    ],
+    brief:[
+      ["NewsBreak gets","Performance revenue on home content it already publishes, as a native alternative to display ads. Can later extend to NDot AI publishers."],
+      ["Thumbtack gets","Demand at the moment a need appears, across 40M+ monthly NewsBreak users, with broad category and geographic coverage."],
+      ["Precedent","Nextdoor shows Thumbtack pro cards in its feed. Here the trigger is a story, not a search, so the module stays contextual and quiet."],
+      ["Effort: medium","Widgets are low-code. NewsBreak builds the topic-to-category map, placement rules and an ad-stack exception. Conversion needs testing before scale."]
+    ],
+    start: function(){
+      if (closeSheet) closeSheet(true);
+      var run = ++B.s.run, st = B_STORIES[B.s.story];
+      B.s.cats = []; B.s.cat = null; B.s.pros = []; B.s.tasks = []; B.s.impr = false;
+      log("b","article_view","story="+B.s.story+" tag="+(st.tag||"none")+" zip="+B.s.zip);
+      if (!st.tag) { B.s.status = "hidden"; setReq("No Thumbtack call. This story has no home-services topic tag, so the module is not requested."); log("b","module_skipped","no home topic tag"); B.render(); return; }
+      B.s.status = "loading"; B.render();
+      var path = st.tag === "seasonal" ? "/api/v4/categories/homecare?zipCode="+B.s.zip+"&propertyType=single_family" : "/api/v4/categories/recommendations?zipCode="+B.s.zip+"&recommendationType=popular";
+      setReq('<b>GET</b> ' + esc(path) + (st.topic ? '\n\n// NewsBreak-side topic map\n' + jsonBlock({ tag:st.tag, categories:st.topic }) : ''));
+      log("b","request","GET " + path);
+      var t0 = performance.now();
+      mockCall(B, B.getMock).then(function(res){
+        if (run !== B.s.run) return;
+        var errs = B.validate(res); if (errs.length) throw { status:"invalid", detail:errs[0] };
+        log("b","response 200", res.data.length + " items, " + Math.round(performance.now()-t0) + " ms");
+        if (st.tag === "seasonal") { B.s.tasks = res.data; B.s.status = res.data.length ? "ready" : "hidden"; }
+        else {
+          var ranked = res.data.slice().sort(function(x,y){ return (x.rank||99) - (y.rank||99); }).map(function(c){ return c.categoryName; });
+          B.s.cats = ranked.filter(function(n){ return st.topic.indexOf(n) !== -1; }).slice(0,3);
+          if (B.s.cats.length) { B.s.status = "ready"; B.pick(B.s.cats[0], true); return; }
+          B.s.status = "hidden";
+        }
+        if (B.s.status === "hidden") log("b","module_hidden","no matching categories in "+B.s.zip);
+        B.render();
+      }).catch(function(err){
+        if (run !== B.s.run) return;
+        log("b","response " + (err.status||"error"), (err.detail||"") + " · module hidden");
+        B.s.status = "hidden"; B.render();
+      });
+    },
+    pick: function(cat, auto){
+      B.s.cat = cat; B.s.pros = bPros(B.s.zip, cat);
+      if (!auto) { log("b","category_tap","category="+cat); setReq('<b>POST</b> /api/v4/businesses/search-filtered\n' + jsonBlock({ zipCode:B.s.zip, categoryName:cat, limit:3, utm_source:"cma-newsbreak-demo" })); }
+      B.render();
+    },
+    render: function(){
+      var s = B.s, st = B_STORIES[s.story];
+      $("appbar").innerHTML = '<span class="logo news">NewsBreak</span><span class="spacer"></span><span class="chip">'+esc(ZIPS[s.zip].city)+'</span><button class="restart" data-restart>Restart</button>';
+      $("tabbar").innerHTML = '<span class="on">For you</span><span>Local</span><span>Alerts</span><span>Me</span>';
+      var icon = st.kind === "alert" ? '<path d="M8 30a10 10 0 0 1 2-19.8A13 13 0 0 1 35 13a8.5 8.5 0 0 1 1 17Z" fill="currentColor" opacity=".35"/><path d="M27 32l-5 9h6l-4 9" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' :
+        st.kind === "seasonal" ? '<path d="M24 6v36M8 15l32 18M8 33l32-18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>' :
+        '<rect x="8" y="12" width="32" height="26" rx="3" fill="currentColor" opacity=".3"/><path d="M8 20h32M18 20v18" stroke="currentColor" stroke-width="3"/>';
+      var h = '<article class="article"><p class="kicker'+(st.kind==="alert"?' alert':'')+'">'+esc(st.kicker)+'</p><h2 class="headline">'+esc(st.title)+'</h2><p class="dek">'+esc(st.dek)+'</p><p class="byline">By NewsBreak Local · 2 hr ago · '+esc(ZIPS[s.zip].city)+'</p>' +
+        '<div class="hero" style="background:'+st.hue[0]+';color:'+st.hue[1]+'"><svg viewBox="0 0 48 48" aria-hidden="true">'+icon+'</svg></div>' +
+        st.body.map(function(p){ return '<p class="body">'+esc(p)+'</p>'; }).join("") + '</article>';
+      if (s.status === "loading") h += '<div class="module">' + skel(2) + '</div>';
+      if (s.status === "ready" && st.tag === "seasonal") {
+        if (!s.impr) { s.impr = true; log("b","module_impression","type=homecare tasks="+s.tasks.length); }
+        h += '<div class="module"><div class="module-h"><h3>Home care this month in '+esc(s.zip)+'</h3><span class="attrib">With <b>Thumbtack</b></span></div><div style="margin-top:6px">' +
+          s.tasks.map(function(t, i){ return '<div class="task"><div><b>'+esc(t.taskName)+'</b><span>'+esc(t.description)+'</span><br><button class="linkbtn" data-btask="'+i+'">Find pros</button></div><div class="cost">$'+esc(t.averageCost.min)+'–$'+esc(t.averageCost.max)+'<br><span>typical</span></div></div>'; }).join("") + '</div></div>';
+      }
+      if (s.status === "ready" && st.tag !== "seasonal") {
+        if (!s.impr) { s.impr = true; log("b","module_impression","type=pros categories="+s.cats.join("|")); }
+        h += '<div class="module"><div class="module-h"><h3>'+esc(st.prompt)+' Top-rated pros near '+esc(s.zip)+'</h3><span class="attrib">With <b>Thumbtack</b></span></div>' +
+          '<div class="cats" role="group" aria-label="Service categories">' + s.cats.map(function(c){ return '<button class="cat" data-bcat="'+esc(c)+'" aria-pressed="'+(c===s.cat)+'">'+esc(c)+'</button>'; }).join("") + '</div>' +
+          '<div class="pros">' + (s.pros.length ? s.pros.map(function(p){ return proCard(p, "data-bpro"); }).join("") : '<div class="state empty">No pros for this category near '+esc(s.zip)+' yet.</div>') + '</div></div>';
+      }
+      h += '<div class="related"><p class="kicker">More local</p><p>Library extends weekend hours through December</p><p>High school robotics team heads to state finals</p></div>';
+      view.innerHTML = h;
+    },
+    click: function(e){
+      var c = e.target.closest("[data-bcat]"); if (c) { B.pick(c.dataset.bcat); return; }
+      var t = e.target.closest("[data-btask]");
+      if (t) {
+        var task = B.s.tasks[Number(t.dataset.btask)];
+        log("b","task_tap","task="+task.taskName+" category="+task.categoryName);
+        B.sheetPros(task.categoryName, task.taskName); return;
+      }
+      var p = e.target.closest("[data-bpro]");
+      if (p) { var pr = B.s.pros.filter(function(x){ return x.businessID === p.dataset.bpro; })[0]; if (pr) B.sheet(pr, B.s.cat); }
+    },
+    sheetPros: function(cat, label){
+      var list = bPros(B.s.zip, cat);
+      setReq('<b>POST</b> /api/v4/businesses/search-filtered\n' + jsonBlock({ zipCode:B.s.zip, categoryName:cat, userQuery:label, limit:3, utm_source:"cma-newsbreak-demo" }));
+      openSheet(TT_BAR + '<h3 id="sheetTitle">'+esc(label)+'</h3><p class="sub">'+esc(cat)+' pros near '+esc(B.s.zip)+'</p><div class="pros" style="margin-top:10px">' +
+        (list.length ? list.map(function(p){ return proCard(p, "data-spro"); }).join("") : '<div class="state empty">No pros near '+esc(B.s.zip)+' yet.</div>') +
+        '</div><button class="btn btn-ghost" data-close>Close</button>', function(e){
+          var x = e.target.closest("[data-spro]"); if (!x) return;
+          var pr = list.filter(function(q){ return q.businessID === x.dataset.spro; })[0]; if (pr) B.sheet(pr, cat);
+        });
+    },
+    sheet: function(p, cat){
+      log("b","pro_card_click","business="+p.businessID+" category="+cat);
+      openSheet(TT_BAR + '<div style="display:flex;gap:10px;align-items:center">'+avatar(p.businessName)+'<div><h3 id="sheetTitle">'+esc(p.businessName)+'</h3><p class="sub"><span class="star">★</span> '+esc(p.rating)+' · '+esc(p.numberOfReviews)+' reviews'+(p.isTopPro?' · Top Pro':'')+'</p></div></div>' +
+        '<p class="sub" style="margin-top:10px">'+esc(cat)+' in '+esc(ZIPS[B.s.zip].city)+'. Starting at $'+esc(p.startingPrice)+'. Usually responds in about '+esc(p.responseTimeHours)+' hr.</p>' +
+        '<p class="sub" style="margin-top:8px">“Came out the morning after the storm and had the tarp on by noon.” · Verified review</p>' +
+        '<p class="sub" style="margin-top:10px">The Service Page widget loads in this in-app sheet from <code>widgets.servicePageURL</code>:</p><div class="url">'+esc(p.widgets.servicePageURL)+'</div>' +
+        '<a class="btn btn-tt" href="'+esc(p.widgets.servicePageURL)+'" target="_blank" rel="noopener" data-bopen>Request a quote</a><button class="btn btn-ghost" data-close>Back to the story</button>',
+        function(e){ if (e.target.closest("[data-bopen]")) log("b","service_page_open",p.widgets.servicePageURL); });
+    }
+  };
+
+  /* =========================================================
+     OPTION C · MCP assistant
+     ========================================================= */
+  function cDefaults(){
+    var z = {};
+    Object.keys(ZIPS).forEach(function(k){
+      var pros = k === "59001" ? [] : k === "94040" ? [
+        pro(k,"Central Air Conditioning Repair","Coolwave HVAC",4.9,302,true,89,1,{ presetJob:{ title:"AC diagnostic visit", price:129, window:"Tomorrow, 8–10 AM" } }),
+        pro(k,"Central Air Conditioning Repair","Shoreline Heating & Air",4.8,176,true,99,1,{ presetJob:{ title:"AC diagnostic visit", price:139, window:"Tomorrow, 1–3 PM" } }),
+        pro(k,"Central Air Conditioning Repair","Valley Comfort Mechanical",4.7,94,false,79,2,{ presetJob:{ title:"AC diagnostic visit", price:119, window:"Friday, 9–11 AM" } }),
+        pro(k,"Central Air Conditioning Repair","Arroyo AC Repair",4.6,41,false,75,3,{ presetJob:null })
+      ] : [
+        pro(k,"Central Air Conditioning Repair","Peachtree Climate Co.",4.9,211,true,85,1,{ presetJob:{ title:"AC diagnostic visit", price:119, window:"Tomorrow, 10 AM–12 PM" } }),
+        pro(k,"Central Air Conditioning Repair","Druid Hills HVAC",4.7,73,false,95,2,{ presetJob:null })
+      ];
+      z[k] = { jsonrpc:"2.0", id:1, result:{ structuredContent:{
+        category:"Central Air Conditioning Repair",
+        followUpQuestions:[
+          { id:"system_type", question:"What kind of system is it?", options:["Central AC","Heat pump","Ductless mini-split"] },
+          { id:"timing", question:"When do you need someone?", options:["As soon as possible","Within 2 days","This week"] }
+        ],
+        data:pros } } };
+    });
+    return z;
+  }
+  var C = {
+    key:"c",
+    title:"Option C · AI assistant via Thumbtack MCP",
+    hint:"Nia keeps its own diagnosis, then calls Thumbtack's MCP server as a tool. Thumbtack supplies the follow-up questions, pros and booking. The homeowner approves before any pro is contacted.",
+    jsonTitle:"Mock MCP result · tools/call search_pros",
+    s:{ zip:"94040", preset:false, mode:"ok", latency:800, step:"start", answers:{}, pros:[], qs:[], run:0 },
+    mocks:cDefaults(),
+    controls: function(){
+      var z = Object.keys(ZIPS).map(function(k){ return '<option value="'+k+'"'+(k===C.s.zip?' selected':'')+'>'+esc(ZIPS[k].label)+'</option>'; }).join("");
+      return ctlZip("c-zip", z) +
+        '<div class="ctl"><span class="lbl" id="c-presetLbl">MCP toolset</span><div class="seg" role="group" aria-labelledby="c-presetLbl" id="c-preset"><button data-p="0" aria-pressed="'+(!C.s.preset)+'">Search Pros</button><button data-p="1" aria-pressed="'+C.s.preset+'">Preset Jobs (phase 2)</button></div></div>' +
+        ctlMode("c") + ctlLatency("c-lat", C.s.latency);
+    },
+    bind: function(){
+      $("c-zip").onchange = function(){ C.s.zip = this.value; showJson(); C.start(); };
+      document.querySelectorAll("#c-preset button").forEach(function(b){ b.onclick = function(){
+        C.s.preset = b.dataset.p === "1";
+        document.querySelectorAll("#c-preset button").forEach(function(x){ x.setAttribute("aria-pressed", String(x === b)); });
+        log("c","toolset_change", C.s.preset ? "preset_jobs" : "search_pros"); C.start();
+      }; });
+      bindMode(C); bindLatency("c-lat", C);
+    },
+    getMock: function(){ return C.mocks[C.s.zip]; },
+    setMock: function(b){ C.mocks[C.s.zip] = b; },
+    resetMocks: function(){ C.mocks = cDefaults(); },
+    validate: function(body){
+      var sc = body && body.result && body.result.structuredContent;
+      if (!sc) return ["Needs result.structuredContent."];
+      if (!Array.isArray(sc.followUpQuestions)) return ["structuredContent.followUpQuestions must be an array."];
+      return validatePros(sc);
+    },
+    mapping:[
+      ["Diagnosis card","Nia (NewsBreak side); Thumbtack is not asked to diagnose"],
+      ["“Using Thumbtack” disclosure and tool lines","Each MCP <code>tools/call</code>, shown so the homeowner knows who is searching"],
+      ["Two follow-up questions","<code>structuredContent.followUpQuestions</code> from <code>search_pros</code>"],
+      ["Top three read-back","<code>structuredContent.data</code> after <code>refine_search</code>"],
+      ["Fixed price and time window","<code>presetJob</code> (Preset Jobs toolset, marked in development)"],
+      ["Approval sheet then booking","<code>create_request</code> or <code>book_preset_job</code>, only after the homeowner taps Approve"]
+    ],
+    brief:[
+      ["NewsBreak gets","Full fulfilment inside Nia with no front-end build. Nearby becomes an assistant that gets jobs done, not one that only diagnoses them."],
+      ["Thumbtack gets","Another major AI-assistant channel, with requests that arrive carrying rich context."],
+      ["Precedent","ChatGPT and Alexa+ reach Thumbtack through MCP or agentic access. Nia already owns triage, so Thumbtack enters later in the conversation."],
+      ["Effort: medium","OAuth client plus tool calls. Nearby must decide how Thumbtack sits next to its own pros, and Preset Jobs depends on Thumbtack's toolset timeline."]
+    ],
+    start: function(){
+      if (closeSheet) closeSheet(true);
+      C.s.run++; C.s.step = "start"; C.s.answers = {}; C.s.pros = []; C.s.qs = []; C.s.chosen = null; C.s.err = false;
+      setReq("Waiting for the homeowner to ask Nia for help.");
+      log("c","session_start","zip="+C.s.zip+" toolset="+(C.s.preset?"preset_jobs":"search_pros"));
+      C.render();
+    },
+    call: function(tool, args){
+      var req = { jsonrpc:"2.0", id:Math.floor(Math.random()*1000), method:"tools/call", params:{ name:tool, arguments:args } };
+      setReq('<b>MCP</b> https://mcp.thumbtack.com  (OAuth client: newsbreak-nearby)\n' + jsonBlock(req));
+      log("c","tools/call", tool + " " + JSON.stringify(args));
+    },
+    search: function(){
+      var run = C.s.run; C.s.step = "searching"; C.s.err = false; C.render();
+      C.call("search_pros", { zipCode:C.s.zip, query:"AC running but blowing warm air", context:{ source:"nearby_nia", aiDiagnosis:"low refrigerant or dirty condenser coil", urgency:"within_2_days" } });
+      var t0 = performance.now();
+      mockCall(C, C.getMock).then(function(res){
+        if (run !== C.s.run) return;
+        var errs = C.validate(res); if (errs.length) throw { status:"invalid", detail:errs[0] };
+        var sc = res.result.structuredContent;
+        log("c","tool_result", sc.data.length + " pros, " + sc.followUpQuestions.length + " questions, " + Math.round(performance.now()-t0) + " ms");
+        C.s.pros = sc.data.slice().sort(function(x,y){ return (y.isTopPro - x.isTopPro) || (y.rating - x.rating); });
+        C.s.qs = sc.followUpQuestions.slice(0,2);
+        C.s.step = !C.s.pros.length ? "none" : C.s.qs.length ? "q" : "results"; C.render();
+      }).catch(function(err){
+        if (run !== C.s.run) return;
+        log("c","tool_error", (err.status||"") + " " + (err.detail||""));
+        C.s.step = "start"; C.s.err = true; C.render();
+      });
+    },
+    refine: function(){
+      var run = C.s.run; C.s.step = "refining"; C.render();
+      C.call("refine_search", { zipCode:C.s.zip, answers:C.s.answers, limit:3 });
+      mockCall(C, function(){ return { ok:true }; }).then(function(){
+        if (run !== C.s.run) return;
+        log("c","tool_result","top 3 returned");
+        C.s.step = "results"; C.render();
+      }).catch(function(err){
+        if (run !== C.s.run) return;
+        log("c","tool_error", (err.status||"") + " " + (err.detail||""));
+        C.s.step = "q"; C.s.err = true; C.render();
+      });
+    },
+    render: function(){
+      var s = C.s;
+      $("appbar").innerHTML = '<span class="logo porch">Nearby AI</span><span class="spacer"></span><span class="chip">'+esc(s.zip)+'</span><button class="restart" data-restart>Restart</button>';
+      $("tabbar").innerHTML = '<span class="on">Ask Nia</span><span>Projects</span><span>Account</span>';
+      var h = '<div class="msgs">';
+      h += '<div class="bub me">My AC is running but it\'s blowing warm air.</div>';
+      h += '<p class="who">Nia</p><div class="diag"><h4>Nia\'s read</h4>' +
+        '<div class="row"><span>Likely cause</span><b>Low refrigerant or a dirty condenser coil</b></div>' +
+        '<div class="row"><span>Urgency</span><b>Within 2 days (92°F Thursday)</b></div>' +
+        '<div class="row"><span>Fair price near '+esc(s.zip)+'</span><b>$120–$450</b></div></div>';
+      h += '<div class="bub bot">First, check that the thermostat is on Cool and the outdoor unit\'s fan is spinning. If it is and the air is still warm, it needs a pro.</div>';
+      if (s.step === "start") {
+        if (s.err) h += '<div class="bub bot">Thumbtack isn\'t responding right now. Want me to try again?</div>';
+        h += '<div class="replies"><button class="reply" data-c="go">'+(s.err?'Try again':'Just get someone out here')+'</button>'+(s.err?'':'<button class="reply ghost" data-c="filter">How do I check the filter?</button>')+'</div>';
+      }
+      if (s.step === "filter") h += '<div class="bub me">How do I check the filter?</div><div class="bub bot">Slide it out of the return vent. If you can\'t see light through it, replace it. Want me to find a pro anyway?</div><div class="replies"><button class="reply" data-c="go">Yes, find someone</button></div>';
+      if (s.step !== "start" && s.step !== "filter") {
+        h += '<div class="bub me">Just get someone out here.</div>';
+        h += '<div class="disclose">'+TT_BAR.replace('class="tt-bar"','class="tt-bar" style="margin:0"')+'<span>Nia is using Thumbtack to find an HVAC pro</span></div>';
+        h += '<div class="tool"><b>search_pros</b> zip '+esc(s.zip)+' · “blowing warm air”</div>';
+      }
+      if (s.step === "searching") h += typing();
+      if (s.step === "none") h += '<div class="bub bot">I couldn\'t find an HVAC pro on Thumbtack near '+esc(s.zip)+'. I\'ll keep checking and message you.</div>';
+      if (["q","refining","results","booked"].indexOf(s.step) !== -1) {
+        s.qs.forEach(function(q, i){
+          var ans = s.answers[q.id];
+          var prevDone = i === 0 || s.answers[s.qs[i-1].id];
+          if (!prevDone) return;
+          h += '<div class="bub bot">'+esc(q.question)+'</div>';
+          if (ans) h += '<div class="bub me">'+esc(ans)+'</div>';
+          else h += '<div class="replies">' + q.options.map(function(o){ return '<button class="reply" data-cq="'+esc(q.id)+'" data-cv="'+esc(o)+'">'+esc(o)+'</button>'; }).join("") + '</div>';
+        });
+        if (s.step === "q" && s.err) h += '<div class="state err">Thumbtack didn\'t answer. Pick an option again to retry.</div>';
+      }
+      if (s.step === "refining") h += '<div class="tool"><b>refine_search</b> '+esc(Object.keys(s.answers).map(function(k){ return s.answers[k]; }).join(" · "))+'</div>' + typing();
+      if (s.step === "results" || s.step === "booked") {
+        h += '<div class="tool"><b>refine_search</b> '+esc(Object.keys(s.answers).map(function(k){ return s.answers[k]; }).join(" · "))+'</div>';
+        var top = s.pros.slice(0,3);
+        h += '<div class="bub bot">Here are the top '+top.length+' near you. '+(s.preset?'Some offer a fixed-price visit you can book now. ':'')+'Tap one to review before I send anything.</div>';
+        h += '<div class="pros"><span class="attrib">Pros from <b>Thumbtack</b></span>' + top.map(function(p){
+          var price = (s.preset && p.presetJob) ? '<div class="p-price">$'+esc(p.presetJob.price)+'<small>'+esc(p.presetJob.window)+'</small></div>' : null;
+          return proCard(p, "data-cpro", price);
+        }).join("") + '</div>';
+      }
+      if (s.step === "booked" && s.chosen) {
+        var pj = s.preset && s.chosen.presetJob;
+        h += '<div class="tool"><b>'+(pj?'book_preset_job':'create_request')+'</b> '+esc(s.chosen.businessName)+'</div>';
+        h += '<div class="bub bot">'+(pj ? 'Booked. '+esc(s.chosen.businessName)+' will arrive '+esc(pj.window)+' for a $'+esc(pj.price)+' diagnostic visit.' : 'Sent to '+esc(s.chosen.businessName)+'. They usually reply within '+esc(s.chosen.responseTimeHours)+' hour'+(s.chosen.responseTimeHours===1?'':'s')+' with a quote.')+' I\'ll remind you the day before.</div>';
+        h += '<div class="state ok">'+esc(s.ref)+' confirmed through Thumbtack. You can also reach the pro by phone: Nia\'s hotline uses the same tools.</div>';
+      }
+      h += '</div>';
+      view.innerHTML = h; scrollEnd();
+    },
+    click: function(e){
+      var g = e.target.closest("[data-c]");
+      if (g) { if (g.dataset.c === "filter") { C.s.step = "filter"; C.render(); } else C.search(); return; }
+      var q = e.target.closest("[data-cq]");
+      if (q) {
+        C.s.answers[q.dataset.cq] = q.dataset.cv; C.s.err = false;
+        log("c","answer", q.dataset.cq + "=" + q.dataset.cv);
+        var done = C.s.qs.every(function(x){ return C.s.answers[x.id]; });
+        if (done) C.refine(); else C.render();
+        return;
+      }
+      var p = e.target.closest("[data-cpro]");
+      if (p && C.s.step === "results") { var pr = C.s.pros.filter(function(x){ return x.businessID === p.dataset.cpro; })[0]; if (pr) C.sheet(pr); }
+    },
+    sheet: function(p){
+      var pj = C.s.preset && p.presetJob;
+      log("c","pro_selected","business="+p.businessID);
+      var html = TT_BAR + '<h3 id="sheetTitle">Approve before Nia sends this</h3><p class="sub">'+esc(p.businessName)+' · <span class="star">★</span> '+esc(p.rating)+' ('+esc(p.numberOfReviews)+')'+(p.isTopPro?' · Top Pro':'')+'</p>' +
+        '<div class="fields">' +
+        '<div class="field"><label>Job</label><div>AC repair: blowing warm air</div></div>' +
+        '<div class="field"><label>System<span class="pf">you told Nia</span></label><div>'+esc(C.s.answers.system_type || "Not given")+'</div></div>' +
+        '<div class="field"><label>Timing<span class="pf">you told Nia</span></label><div>'+esc(C.s.answers.timing || "Not given")+'</div></div>' +
+        (pj ? '<div class="field"><label>Fixed price visit</label><div>'+esc(pj.title)+' · $'+esc(pj.price)+' · '+esc(pj.window)+'</div></div>' : '<div class="field"><label>Next step</label><div>The pro replies with a quote. No charge to request.</div></div>') +
+        '</div><p class="sub" style="margin-top:10px">Nia shares your name, ZIP and these details with this pro only.</p>' +
+        '<button class="btn btn-porch" data-approve>'+(pj?'Approve and book':'Approve and send')+'</button><button class="btn btn-ghost" data-close>Not this one</button>';
+      openSheet(html, function(e, close, bg){
+        var b = e.target.closest("[data-approve]"); if (!b) return;
+        b.disabled = true; b.textContent = pj ? "Booking…" : "Sending…";
+        log("c","homeowner_approved","business="+p.businessID);
+        C.call(pj ? "book_preset_job" : "create_request", { businessID:p.businessID, zipCode:C.s.zip, answers:C.s.answers, utm_source:"cma-newsbreak-demo" });
+        var run = C.s.run;
+        mockCall(C, function(){ return { ref:(pj?"Booking ":"Request ") + "#" + Math.floor(Math.random()*9e6+1e6) }; }).then(function(res){
+          if (run !== C.s.run) return;
+          C.s.chosen = p; C.s.ref = res.ref; C.s.step = "booked";
+          log("c","tool_result", res.ref + " " + UTM);
+          close(true); C.render();
+        }).catch(function(err){
+          log("c","tool_error", (err.status||"") + " " + (err.detail||""));
+          b.disabled = false; b.textContent = "Try again";
+        });
+      }, function(){ log("c","approval_dismissed","business="+p.businessID); });
+    }
+  };
+
+  /* ------------ shared controls ------------ */
+  function ctlZip(id, opts){ return '<div class="ctl"><label for="'+id+'">zipCode</label><select id="'+id+'">'+opts+'</select></div>'; }
+  function ctlMode(k){ var o = OPTS[k]; return '<div class="ctl"><span class="lbl" id="'+k+'-modeLbl">Response</span><div class="seg" role="group" aria-labelledby="'+k+'-modeLbl" id="'+k+'-mode"><button data-mode="ok" aria-pressed="'+(o.s.mode==="ok")+'">200</button><button data-mode="error" aria-pressed="'+(o.s.mode==="error")+'">Error</button></div></div>'; }
+  function ctlLatency(id, v){ return '<div class="ctl"><label for="'+id+'">Latency (ms)</label><input type="number" id="'+id+'" value="'+v+'" min="0" max="5000" step="100" style="width:96px"></div>'; }
+  function bindMode(o){
+    document.querySelectorAll("#"+o.key+"-mode button").forEach(function(b){ b.onclick = function(){
+      o.s.mode = b.dataset.mode;
+      document.querySelectorAll("#"+o.key+"-mode button").forEach(function(x){ x.setAttribute("aria-pressed", String(x === b)); });
+      o.start();
+    }; });
+  }
+  function bindLatency(id, o){ $(id).onchange = function(){ var n = Math.max(0, Math.min(5000, Math.round(Number(this.value) || 0))); this.value = n; o.s.latency = n; }; }
+  function validatePros(body){
+    if (!body || !Array.isArray(body.data)) return ["Top-level object needs a data array."];
+    var errs = [];
+    body.data.forEach(function(p, i){
+      var x = "data[" + i + "]";
+      if (typeof p.businessID !== "string") errs.push(x + ".businessID must be a string");
+      if (typeof p.businessName !== "string") errs.push(x + ".businessName must be a string");
+      if (typeof p.rating !== "number") errs.push(x + ".rating must be a number");
+      if (typeof p.numberOfReviews !== "number") errs.push(x + ".numberOfReviews must be a number");
+      if (typeof p.startingPrice !== "number") errs.push(x + ".startingPrice must be a number");
+      if (!p.widgets || !/^https:\/\//.test(p.widgets.servicePageURL || "")) errs.push(x + ".widgets.servicePageURL must be an https URL");
+    });
+    return errs;
+  }
+
+  var OPTS = { a:A, b:B, c:C };
+
+  function showJson(){ $("json").value = JSON.stringify(OPTS[cur].getMock(), null, 2); $("jsonMsg").textContent = ""; }
+
+  function select(k, fromHash){
+    if (!OPTS[k]) k = "a";
+    cur = k; var o = OPTS[k];
+    screen.dataset.app = k === "b" ? "news" : "assistant";
+    document.querySelectorAll(".switch button").forEach(function(b){ b.setAttribute("aria-selected", String(b.dataset.opt === k)); });
+    $("stage").setAttribute("aria-labelledby", "tab-" + k);
+    document.querySelectorAll("section.compare th[data-col]").forEach(function(th){ th.classList.toggle("on", th.dataset.col === k); });
+    $("pTitle").textContent = o.title; $("pHint").textContent = o.hint; $("jsonTitle").textContent = o.jsonTitle;
+    $("controls").innerHTML = o.controls(); o.bind();
+    $("mapping").innerHTML = o.mapping.map(function(r){ return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>'; }).join("");
+    $("brief").innerHTML = o.brief.map(function(r){ return '<div><b>'+esc(r[0])+'</b><p>'+esc(r[1])+'</p></div>'; }).join("");
+    showJson(); drawLog();
+    if (!fromHash) { try { history.replaceState(null, "", "#option-" + k); } catch (e) {} }
+    o.start();
+  }
+
+  document.querySelectorAll(".switch button").forEach(function(b){ b.addEventListener("click", function(){ select(b.dataset.opt); }); });
+  $("appbar").addEventListener("click", function(e){ if (e.target.closest("[data-restart]")) OPTS[cur].start(); });
+  view.addEventListener("click", function(e){ OPTS[cur].click(e); });
+
+  $("applyBtn").addEventListener("click", function(){
+    var msg = $("jsonMsg"), body, o = OPTS[cur];
+    try { body = JSON.parse($("json").value); } catch (err) { msg.className = "msg bad"; msg.textContent = "That isn't valid JSON: " + err.message; return; }
+    var errs = o.validate(body);
+    if (errs.length) { msg.className = "msg bad"; msg.textContent = errs[0] + (errs.length > 1 ? " (+" + (errs.length-1) + " more)" : ""); return; }
+    o.setMock(body); msg.className = "msg ok"; msg.textContent = "Applied"; o.start();
+  });
+  $("resetBtn").addEventListener("click", function(){ var o = OPTS[cur]; o.resetMocks(); showJson(); $("jsonMsg").className = "msg ok"; $("jsonMsg").textContent = "Mock reset"; o.start(); });
+  $("json").addEventListener("input", function(){ $("jsonMsg").textContent = ""; });
+
+  function fromHash(){ var m = /^#option-([abc])$/.exec(location.hash); return m ? m[1] : "a"; }
+  window.addEventListener("hashchange", function(){ var k = fromHash(); if (k !== cur) select(k, true); });
+  select(fromHash(), true);
+})();
+</script>
