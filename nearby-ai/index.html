@@ -1098,9 +1098,11 @@ section.compare th.on{color:var(--ink)}
      build.py fills TT_CALL from platform/thumbtack-call-center.json (partner-safe fields; internal
      builds add the internal overlay) and CALL_SCRIPTS from partners/<slug>/calls.json.
      makeCallOption(k) returns an option with the same shape as A, B and C, shown when the
-     viewer picks Channel: Call on option k. Change the call flow or ToU steps in the JSON, not here. */
-  var TT_CALL = {"hours": "8 AM to 8 PM ET", "termsUrl": "thumbtack.com/terms", "humanLine": "Thumbtack's human line (number in your partner sheet)", "humanDnis": "TT_HUMAN_LINE", "aiNumber": "your Thumbtack AI number (one per partner entity)", "availability": {"request": "GET Thumbtack queue availability", "rule": "acceptCalls is true when Thumbtack's team can take a call now, false otherwise, including outside staffed hours. On false, don't transfer."}, "webhook": {"request": "POST Thumbtack lead webhook", "result": "Thumbtack creates a Lead tagged with your attribution link, in about a second"}, "screenPop": "Thumbtack finds the Lead by the caller's phone number and opens it for the agent", "aiLookup": "Thumbtack looks up your AI number and tags the call with your utm_source", "unattributed": "unattributed", "consentCheck": "consent check", "createUser": "create or match the Thumbtack account", "intakeForm": "Thumbtack intake form", "consent": {"human": {"method": "Verbal Terms of Use acceptance, with the terms also texted, on a recorded call", "project": "Verbal OK to send the project to the pros the agent names", "account": "The agent enters name, phone and email in the Thumbtack intake form", "audit": "Call recording"}, "ai": {"method": "Verbal Terms of Use acceptance, or reply I AGREE to the text", "project": "The account is created or matched only after consent is confirmed, then the request is attached to that user", "account": "The account step runs only after the consent check returns confirmed", "audit": "Texted consent is logged. Verbal consent exists only in the call recording"}}, "rules": ["Human path: post the lead webhook first, then transfer. The agent can only see a Lead that already exists.", "call_from must equal the caller ID on the transfer, or the agent gets no screen pop.", "Send a new lead_id for every transfer, even for a repeat caller.", "Every webhook includes DNIS, the Thumbtack number the call goes to.", "Human calls go to the human line. AI calls go to the partner's own AI number. The AI line takes calls at any time and needs no webhook."]};
-  var CALL_SCRIPTS = {"a": {"title": "Option A by phone · coverage-gap hand-off", "hint": "When Call Nia has no Nearby pro to match, Nia hands the caller to Thumbtack: the human team during staffed hours, or Thumbtack's AI line at any time. The caller accepts Thumbtack's Terms of Use on the call before any account or request is created.", "hotline": "Call Nia", "assistant": "Nia", "partnerName": "Nearby AI", "callerName": "Sam Rivera", "callerFirst": "Sam", "email": "sam@example.com", "callFrom": "5555550142", "otherCallerId": "5555550199", "leadPrefix": "nearby-", "zip": "94040", "category": "Plumbing", "categoryNoun": "plumber", "greet": "Hi, this is Nia. What's going on at home?", "need": "My kitchen sink is leaking under the cabinet.", "needShort": "a leak under your kitchen sink", "needAgain": "My kitchen sink is leaking under the cabinet. I'm in 94040.", "gap": "I don't have a Nearby pro I can vouch for in 94040 yet. Thumbtack has local plumbers. Want me to connect you?", "declineReply": "No problem. I'll keep looking for a Nearby pro and call you back.", "transferLine": "Connecting you to Thumbtack's team now. I've passed along your ZIP and the leak.", "transferLineAi": "Connecting you to Thumbtack's assistant now. It's available any time.", "agent": "Alex", "prosLine": "Two plumbers near 94040 can come this week: {pros}. Okay to send your project to both?", "pros": [{"name": "Bayline Plumbing & Drain", "rating": 4.9}, {"name": "Castro Street Plumbers", "rating": 4.8}], "utmHuman": "cma-newsbreak-demo", "utmAi": "cma-newsbreak-demo", "briefPartner": "A place to send callers it can't serve today, with no new pro recruiting."}};
+     viewer picks Channel: Call on option k. Change the call flow or ToU steps in the JSON, not here.
+     Modes (calls.json "mode", default TT_CALL.defaultMode): ai = AI line only; human = human team only;
+     blended = human team, with the AI line offered when acceptCalls is false. */
+  var TT_CALL = {"defaultMode": "ai", "modes": {"ai": "Default. The partner transfers every call to its own Thumbtack AI number. Available any time, no lead webhook, credited by the number dialed.", "human": "The partner checks the queue, posts the lead webhook and transfers to Thumbtack's human team during staffed hours. When acceptCalls is false, the partner doesn't transfer.", "blended": "Human first, AI as backup: the human path during staffed hours, and when acceptCalls is false (after hours or a full queue) the partner offers Thumbtack's AI line instead. Proposed for Nearby AI; not yet confirmed."}, "hours": "8 AM to 8 PM ET", "termsUrl": "thumbtack.com/terms", "humanLine": "Thumbtack's human line (number in your partner sheet)", "humanDnis": "TT_HUMAN_LINE", "aiNumber": "your Thumbtack AI number (one per partner entity)", "availability": {"request": "GET Thumbtack queue availability", "rule": "acceptCalls is true when Thumbtack's team can take a call now, false otherwise, including outside staffed hours. On false, don't transfer."}, "webhook": {"request": "POST Thumbtack lead webhook", "result": "Thumbtack creates a Lead tagged with your attribution link, in about a second"}, "screenPop": "Thumbtack finds the Lead by the caller's phone number and opens it for the agent", "aiLookup": "Thumbtack looks up your AI number and tags the call with your utm_source", "unattributed": "unattributed", "consentCheck": "consent check", "createUser": "create or match the Thumbtack account", "intakeForm": "Thumbtack intake form", "consent": {"human": {"method": "Verbal Terms of Use acceptance, with the terms also texted, on a recorded call", "project": "Verbal OK to send the project to the pros the agent names", "account": "The agent enters name, phone and email in the Thumbtack intake form", "audit": "Call recording"}, "ai": {"method": "Verbal Terms of Use acceptance, or reply I AGREE to the text", "project": "The account is created or matched only after consent is confirmed, then the request is attached to that user", "account": "The account step runs only after the consent check returns confirmed", "audit": "Texted consent is logged. Verbal consent exists only in the call recording"}}, "rules": ["Human path: post the lead webhook first, then transfer. The agent can only see a Lead that already exists.", "call_from must equal the caller ID on the transfer, or the agent gets no screen pop.", "Send a new lead_id for every transfer, even for a repeat caller.", "Every webhook includes DNIS, the Thumbtack number the call goes to.", "Human calls go to the human line. AI calls go to the partner's own AI number. The AI line takes calls at any time and needs no webhook."]};
+  var CALL_SCRIPTS = {"a": {"mode": "blended", "title": "Option A by phone · coverage-gap hand-off", "hint": "When Call Nia has no Nearby pro to match, Nia hands the caller to Thumbtack: the human team during staffed hours, or Thumbtack's AI line at any time. The caller accepts Thumbtack's Terms of Use on the call before any account or request is created.", "hotline": "Call Nia", "assistant": "Nia", "partnerName": "Nearby AI", "callerName": "Sam Rivera", "callerFirst": "Sam", "email": "sam@example.com", "callFrom": "5555550142", "otherCallerId": "5555550199", "leadPrefix": "nearby-", "zip": "94040", "category": "Plumbing", "categoryNoun": "plumber", "greet": "Hi, this is Nia. What's going on at home?", "need": "My kitchen sink is leaking under the cabinet.", "needShort": "a leak under your kitchen sink", "needAgain": "My kitchen sink is leaking under the cabinet. I'm in 94040.", "gap": "I don't have a Nearby pro I can vouch for in 94040 yet. Thumbtack has local plumbers. Want me to connect you?", "declineReply": "No problem. I'll keep looking for a Nearby pro and call you back.", "transferLine": "Connecting you to Thumbtack's team now. I've passed along your ZIP and the leak.", "transferLineAi": "Connecting you to Thumbtack's assistant now. It's available any time.", "agent": "Alex", "prosLine": "Two plumbers near 94040 can come this week: {pros}. Okay to send your project to both?", "pros": [{"name": "Bayline Plumbing & Drain", "rating": 4.9}, {"name": "Castro Street Plumbers", "rating": 4.8}], "utmHuman": "cma-newsbreak-demo", "utmAi": "cma-newsbreak-demo", "briefPartner": "A place to send callers it can't serve today, with no new pro recruiting."}};
   (function(){
     var st = document.createElement("style");
     st.textContent =
@@ -1117,9 +1119,10 @@ section.compare th.on{color:var(--ink)}
 
   function makeCallOption(k){
     var sc = CALL_SCRIPTS[k], c = TT_CALL, STOP = {};
+    var mode = ({ ai:1, human:1, blended:1 })[sc.mode] ? sc.mode : (c.defaultMode || "ai");
     var O = {
       key: k + "-call", app: "call", title: sc.title, hint: sc.hint,
-      s: { path:"human", queue:"open", callerId:"match", mode:"ok", latency:700, run:0, lines:[], choices:null, answer:null, pending:false, ended:false, t0:0, pop:true, utm:"" },
+      s: { path: mode === "ai" ? "ai" : "human", queue:"open", callerId:"match", mode:"ok", latency:700, run:0, lines:[], choices:null, answer:null, pending:false, ended:false, t0:0, pop:true, utm:"" },
       timer: null
     };
     O.resetMocks = function(){ O.mocks = { human:{ acceptCalls: O.s.queue === "open" }, ai:{ utmsource: sc.utmAi } }; };
@@ -1138,6 +1141,7 @@ section.compare th.on{color:var(--ink)}
       var rows = h ? [
         ["Offer to connect", sc.partnerName + " (partner side), at the same coverage-gap moment as the app"],
         ["Transfer only when Thumbtack can answer", c.availability.request + ". " + c.availability.rule],
+        ["After hours or a full queue", mode === "blended" ? "The partner offers Thumbtack's AI line instead (proposed)" : "No transfer. The partner keeps the caller"],
         ["Agent greets the caller by name", c.webhook.request + " before the transfer. " + c.screenPop],
         ["Terms of Use on the call", x.method + ". Audit: " + x.audit],
         ["Account", x.account],
@@ -1154,7 +1158,7 @@ section.compare th.on{color:var(--ink)}
       O.brief = h ? [
         [sc.partnerName + " gets", sc.briefPartner],
         ["Thumbtack gets", "A warm transfer with the caller's ZIP, category and number already in a Lead."],
-        ["Effort: low", "One webhook and a call transfer. The availability check is optional."],
+        ["Effort: low", "One webhook and a call transfer. The availability check is optional." + (mode === "blended" ? " Blended adds the partner's own Thumbtack AI number as the backup." : "")],
         ["Partner rules", c.rules.slice(0, 4).join(" ")]
       ] : [
         [sc.partnerName + " gets", "A hand-off at any hour, with no webhook to build."],
@@ -1176,13 +1180,14 @@ section.compare th.on{color:var(--ink)}
       }; });
     }
     O.controls = function(){
-      var h = seg(k+"-vpath", "Thumbtack line", O.s.path, [["human","Human team"],["ai","AI assistant"]]);
+      var h = mode === "blended" ? seg(k+"-vpath", "Thumbtack line", O.s.path, [["human","Human team"],["ai","AI assistant"]]) :
+        '<div class="ctl"><span class="lbl">Thumbtack line</span><span class="chip">'+(mode === "ai" ? "AI assistant (default)" : "Human team")+'</span></div>';
       if (O.s.path === "human") h += seg(k+"-vq", "Queue", O.s.queue, [["open","Accepting calls"],["closed","Closed or full"]]) +
         seg(k+"-vcid", "Caller ID", O.s.callerId, [["match","Matches call_from"],["other","Different"]]);
       return h + ctlLatency(k+"-vlat", O.s.latency);
     };
     O.bind = function(){
-      bindSeg(k+"-vpath", function(v){ O.s.path = v; O.refresh(); select(k); });
+      if (mode === "blended") bindSeg(k+"-vpath", function(v){ O.s.path = v; O.refresh(); select(k); });
       if (O.s.path === "human") {
         bindSeg(k+"-vq", function(v){ O.s.queue = v; O.mocks.human.acceptCalls = v === "open"; showJson(); O.start(); });
         bindSeg(k+"-vcid", function(v){ O.s.callerId = v; O.start(); });
@@ -1263,6 +1268,12 @@ section.compare th.on{color:var(--ink)}
       var r;
       try { r = await fetchMock(run, "human"); } catch (e) { if (e === STOP) throw e; r = { acceptCalls:false }; log(O.key, "availability_error", (e.status || "") + " " + (e.detail || "")); }
       log(O.key, "availability", "acceptCalls=" + r.acceptCalls);
+      if (!r.acceptCalls && mode !== "blended") {
+        await say(run, "partner", "Thumbtack's team can't take a call right now. They answer " + c.hours + ". Want me to have them call you back?");
+        await ask(run, [{ id:"later", label:"I'll call back", say:"I'll call back later." }]);
+        await say(run, "partner", "Okay. Thumbtack's team is in " + c.hours + ".");
+        return end(run, "ok", "Call ended. No transfer: acceptCalls was false.");
+      }
       if (!r.acceptCalls) {
         await say(run, "partner", "Thumbtack's team can't take a call right now. They answer " + c.hours + ". Thumbtack's AI assistant can help any time. Want that instead?");
         var alt = await ask(run, [{ id:"ai", label:"Yes, the AI assistant", say:"Sure, the AI assistant." }, { id:"later", label:"I'll call back", say:"I'll call back later." }]);
@@ -1340,7 +1351,7 @@ section.compare th.on{color:var(--ink)}
       O.s.run++; O.s.lines = []; O.s.choices = null; O.s.answer = null; O.s.pending = false; O.s.ended = false; O.s.t0 = Date.now(); O.s.pop = true; O.s.utm = "";
       clearInterval(O.timer); O.timer = setInterval(function(){ if (!O.s.ended) drawBar(); }, 1000);
       setReq("Waiting for the caller.");
-      log(O.key, "call_start", "line=" + O.s.path + (O.s.path === "human" ? " queue=" + O.s.queue + " caller_id=" + O.s.callerId : ""));
+      log(O.key, "call_start", "mode=" + mode + " line=" + O.s.path + (O.s.path === "human" ? " queue=" + O.s.queue + " caller_id=" + O.s.callerId : ""));
       var run = O.s.run;
       (async function(){
         push({ kind:"sys", text:"Incoming call to " + sc.hotline });
