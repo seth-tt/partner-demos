@@ -320,7 +320,7 @@ section.compare th.on{color:var(--ink)}
 
   <div class="switch" role="tablist" aria-label="Integration options">
     <button role="tab" id="tab-a" data-opt="a" aria-selected="true" aria-controls="stage"><span class="k">A</span><span><span class="t">Call center hand-off<span class="rec">Pilot first</span></span><span class="d">Tap to call from OfferUp Services. The lead reaches Thumbtack’s team before the call does.</span></span></button>
-    <button role="tab" id="tab-b" data-opt="b" aria-selected="false" aria-controls="stage"><span class="k">B</span><span><span class="t">Preset Jobs in the app<span class="rec dev">In development</span></span><span class="d">Fixed-price TV mounting, cleaning, junk removal and handyman, booked and paid in OfferUp.</span></span></button>
+    <button role="tab" id="tab-b" data-opt="b" aria-selected="false" aria-controls="stage"><span class="k">B</span><span><span class="t">Preset Jobs in the app<span class="rec dev">In development</span></span><span class="d">Fixed-price TV mounting, furniture assembly, cleaning, junk removal and handyman, booked and paid in OfferUp.</span></span></button>
     <button role="tab" id="tab-c" data-opt="c" aria-selected="false" aria-controls="stage"><span class="k">C</span><span><span class="t">Pro replies in the OfferUp inbox<span class="rec new">First partner test</span></span><span class="d">Thumbtack pro messages land beside buy and sell chats, and replies go straight back.</span></span></button>
   </div>
 
@@ -374,7 +374,7 @@ section.compare th.on{color:var(--ink)}
       <table>
         <thead><tr><th></th><th data-col="a">A · Call center</th><th data-col="b">B · Preset Jobs</th><th data-col="c">C · Inbox messaging</th></tr></thead>
         <tbody>
-          <tr><td>Entry point</td><td>Services search, tap to call</td><td>TV purchase, stale listing, Services</td><td>After a request is sent</td></tr>
+          <tr><td>Entry point</td><td>Services search, tap to call</td><td>TV or furniture purchase, stale listing, Services</td><td>After a request is sent</td></tr>
           <tr><td>What it fixes</td><td>Too many pros per request</td><td>Leads that get refunded</td><td>Replies that go unread</td></tr>
           <tr><td>Revenue shape</td><td>Per request, higher value</td><td>Share of a paid booking</td><td>Same request, more hires</td></tr>
           <tr><td>Thumbtack surfaces</td><td>Call center (lead webhook, human line, AI line), Requests</td><td>MCP Preset Job toolset</td><td>Messages API, <code>messageSentV4</code> webhook, Requests</td></tr>
@@ -647,6 +647,12 @@ section.compare th.on{color:var(--ink)}
       qs:[{ id:"q_size", question:"TV size", options:["Up to 54 in.","55 to 69 in.","70 in. or larger"], def:1 },
           { id:"q_wall", question:"Wall type", options:["Drywall","Brick or concrete","Not sure"], def:0 }],
       includes:"Mount, level and hide cables on the wall surface. Bracket included." },
+    furniture: { label:"Just bought furniture (inbox, launching next)", cat:"Furniture Assembly", catID:"cat_furniture_assembly", cfg:"cfg_furniture_assembly_std", base:119, step:25, tab:"Inbox",
+      title:"Get it assembled", pitch:"Fixed-price furniture assembly, booked through Thumbtack.",
+      product:{ name:"6-drawer dresser (flat pack)", sku:"ou-item-904417" },
+      qs:[{ id:"q_items", question:"How many items need assembly?", options:["1 item","2 items","3 items"], def:0 },
+          { id:"q_extra", question:"Any additional services?", options:["No, just assembly","Disassemble old furniture","Haul away old furniture"], def:0 }],
+      includes:"Assemble and place your new furniture. Tools included." },
     junk: { label:"Listing didn’t sell (selling)", cat:"Junk Removal", catID:"cat_junk_removal", cfg:"cfg_junk_single", base:129, step:45, tab:"Selling",
       title:"Haul it away instead", pitch:"Fixed-price junk removal, booked through Thumbtack.",
       product:{ name:"Gray sectional sofa", sku:"ou-item-771029" },
@@ -690,7 +696,7 @@ section.compare th.on{color:var(--ink)}
   var B = {
     key:"b",
     title:"Option B · Preset Jobs, booked in OfferUp",
-    hint:"A fixed-price card appears at the moment it fits: after a TV purchase, on a listing that won’t sell, or in Services. The customer answers two questions, picks a time, sees the price and books. One Thumbtack pro is matched and the job is paid. All four categories here are live as fixed-price jobs on Thumbtack today; the MCP Preset Job toolset that partners book through is in development.",
+    hint:"A fixed-price card appears at the moment it fits: after a TV purchase, on a listing that won’t sell, or in Services. The customer answers two questions, picks a time, sees the price and books. One Thumbtack pro is matched and the job is paid. TV mounting, house cleaning, junk removal and handyman are live as fixed-price jobs on Thumbtack today, and furniture assembly launches next; the MCP Preset Job toolset that partners book through is in development.",
     jsonTitle:"Mock MCP results · availability, times, pricing",
     s:{ zip:"98101", scen:"tv", mode:"ok", latency:600, step:"idle", answers:{}, slot:0, price:null, run:0, token:null, note:"" },
     mocks:bDefaults(),
@@ -715,7 +721,7 @@ section.compare th.on{color:var(--ink)}
     },
     mapping:[
       ["Card shown or hidden","<code>check_preset_job_availability</code> (<code>available</code>, <code>eligibleProCount</code>) for the category and ZIP"],
-      ["Category and configuration","<code>list_preset_job_categories</code>: the only source of <code>categoryID</code> and <code>configurationID</code>, set per partner. TV mounting, house cleaning, junk removal and handyman are live fixed-price categories today"],
+      ["Category and configuration","<code>list_preset_job_categories</code>: the only source of <code>categoryID</code> and <code>configurationID</code>, set per partner. TV mounting, house cleaning, junk removal and handyman are live fixed-price categories today; furniture assembly launches next"],
       ["Two questions","<code>get_preset_job_request_form</code> (<code>requestFormID</code>, <code>questions</code>)"],
       ["Dates and arrival windows","<code>get_preset_job_available_times</code> (<code>availableDates[].slots</code>), 72 hours to 31 days out"],
       ["Fixed price","<code>get_preset_job_pricing</code> (<code>price</code>, <code>searchID</code>). Prices in this mock are illustrative"],
@@ -770,6 +776,11 @@ section.compare th.on{color:var(--ink)}
         h += '<div class="thead">'+avatar("Marcus T")+'<div><b>Marcus</b><span>Samsung 65 in. 4K TV</span></div></div>';
         h += '<div class="ou-card"><div class="ou-item"><div class="ou-thumb" style="background:#1F2222;color:#fff">TV</div><div><b>Samsung 65 in. 4K TV</b><span>Paid $350 · Picked up today</span></div></div></div>';
         h += '<p class="ou-sys">You bought this item</p><div class="msgs"><div class="bub bot">Thanks! Enjoy the TV. The wall bracket isn’t included.</div><div class="bub me">Got it, thanks Marcus.</div></div><div style="height:12px"></div>';
+        h += card();
+      } else if (B.s.scen === "furniture") {
+        h += '<div class="thead">'+avatar("Dana R")+'<div><b>Dana</b><span>6-drawer dresser</span></div></div>';
+        h += '<div class="ou-card"><div class="ou-item"><div class="ou-thumb" style="background:#F1E9DF;color:#8A5A2B">BOX</div><div><b>6-drawer dresser, new in box</b><span>Paid $120 · Picked up today</span></div></div></div>';
+        h += '<p class="ou-sys">You bought this item</p><div class="msgs"><div class="bub bot">Thanks! Heads up, it’s still flat-packed. Instructions are in the box.</div><div class="bub me">No problem, thanks Dana.</div></div><div style="height:12px"></div>';
         h += card();
       } else if (B.s.scen === "junk") {
         h += '<p class="ou-h">Selling</p><div class="ou-card"><div class="ou-item"><div class="ou-thumb" style="background:#E9ECEC;color:#5C5C5C">SOFA</div><div><b>Gray sectional sofa</b><span>$250 · Listed 21 days ago · 0 offers</span></div></div></div>';
