@@ -1,0 +1,1433 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thumbtack × OfferUp Concept</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;family=Newsreader:opsz,wght@6..72,500;6..72,600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Lato:wght@400;700;900&amp;display=swap" rel="stylesheet">
+<style>
+/* Marketplace services template (first used for OfferUp). Layout: header, option switcher, then phone (left) beside a mock-API panel (right); comparison table closes the page. */
+:root{
+  --page:#EEF1F4; --phone:#FFFFFF; --ink:#18212F; --ink-2:#5A6578; --ink-3:#8A93A3;
+  --line:#DDE2E8; --soft:#F3F5F8; --frame:#1D2532;
+  --tt:#0A77B5; --tt-ink:#FFFFFF; --tt-soft:#E6F2FA;
+  --news:#2F3A8F; --news-soft:#E9EBF8;
+  --porch:#B4560B; --porch-ink:#FFFFFF; --porch-soft:#FCEFE2;
+  --ok:#1B7A4B; --ok-soft:#E3F4EA; --err-soft:#FDECEC; --err-ink:#A12828; --warn-soft:#FFF4DB; --warn-ink:#7A5200;
+  --code-bg:#151B26; --code-ink:#D6DEEA; --code-dim:#7D8899;
+  --sans:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --page:#0F141B; --phone:#171D27; --ink:#E8ECF2; --ink-2:#A6B0BF; --ink-3:#768195;
+    --line:#2A3342; --soft:#1F2733; --frame:#2A3342;
+    --tt:#4DB2EA; --tt-ink:#04202F; --tt-soft:#11293A;
+    --news:#9AA6F5; --news-soft:#1E2445;
+    --porch:#F0A060; --porch-ink:#2A1300; --porch-soft:#3A2412;
+    --ok:#5FD39A; --ok-soft:#123323; --err-soft:#3D1A1A; --err-ink:#F3A3A3; --warn-soft:#3A2E10; --warn-ink:#F2CD7A;
+    --code-bg:#0B0F15; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#0F141B; --phone:#171D27; --ink:#E8ECF2; --ink-2:#A6B0BF; --ink-3:#768195;
+  --line:#2A3342; --soft:#1F2733; --frame:#2A3342;
+  --tt:#4DB2EA; --tt-ink:#04202F; --tt-soft:#11293A;
+  --news:#9AA6F5; --news-soft:#1E2445;
+  --porch:#F0A060; --porch-ink:#2A1300; --porch-soft:#3A2412;
+  --ok:#5FD39A; --ok-soft:#123323; --err-soft:#3D1A1A; --err-ink:#F3A3A3; --warn-soft:#3A2E10; --warn-ink:#F2CD7A;
+  --code-bg:#0B0F15; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+button{font:inherit;cursor:pointer;color:inherit}
+a{color:var(--tt)}
+code{font-family:var(--mono);font-size:.88em}
+:focus-visible{outline:2px solid var(--tt);outline-offset:2px}
+.sr{position:absolute;left:-9999px}
+
+.shell{max-width:1200px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+header.top h1{font-size:28px;font-weight:800;letter-spacing:-0.015em;margin:0 0 6px;text-wrap:balance}
+header.top p{margin:0;color:var(--ink-2);max-width:72ch}
+.internal{display:inline-block;font-size:12px;font-weight:700;color:var(--ink-2);background:var(--soft);border-radius:8px;padding:4px 10px;margin:0 0 12px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tt);margin:0 0 6px}
+
+.switch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:22px 0 24px}
+@media (max-width:720px){.switch{grid-template-columns:minmax(0,1fr)}}
+.switch button{border:1.5px solid var(--line);background:var(--phone);border-radius:14px;padding:12px 14px;text-align:left;display:flex;gap:12px;align-items:flex-start}
+.switch button[aria-selected="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
+.switch .k{font-weight:800;font-size:13px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--soft);flex-shrink:0}
+.switch button[aria-selected="true"] .k{background:var(--ink);color:var(--phone)}
+.switch .t{font-weight:700;font-size:14.5px;display:block;line-height:1.3}
+.switch .d{font-size:12.5px;color:var(--ink-2);display:block;margin-top:2px}
+.switch .rec{font-size:11px;font-weight:700;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:1px}
+
+.wrap{display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:32px;align-items:start}
+@media (max-width:920px){.wrap{grid-template-columns:minmax(0,1fr)}}
+
+/* phone */
+.device{background:var(--frame);border-radius:44px;padding:12px;max-width:390px;width:100%;margin:0 auto;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}
+@media (max-width:920px){.device{position:static}}
+.screen{background:var(--phone);border-radius:34px;overflow:hidden;height:760px;display:flex;flex-direction:column;position:relative}
+.status{display:flex;justify-content:space-between;padding:12px 26px 6px;font-size:13px;font-weight:600}
+.appbar{display:flex;align-items:center;gap:10px;padding:6px 16px 10px;border-bottom:1px solid var(--line)}
+.logo{font-weight:800;font-size:17px;letter-spacing:-0.02em}
+.logo.news{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--news);letter-spacing:-0.01em}
+.logo.porch{color:var(--porch)}
+.appbar .spacer{flex:1}
+.chip{font-size:12px;font-weight:600;background:var(--soft);color:var(--ink-2);border:0;border-radius:999px;padding:6px 10px}
+.restart{font-size:12px;font-weight:600;background:none;border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:var(--ink-2)}
+.view{flex:1;overflow-y:auto;padding:12px 14px 16px;scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){.view{scroll-behavior:auto}}
+.tabbar{display:flex;border-top:1px solid var(--line);background:var(--phone)}
+.tabbar span{flex:1;text-align:center;padding:10px 0 14px;font-size:12px;color:var(--ink-3);font-weight:500}
+.tabbar span.on{color:var(--ink);font-weight:700}
+
+/* chat */
+.msgs{display:flex;flex-direction:column;gap:10px}
+.bub{max-width:86%;padding:9px 12px;border-radius:16px;font-size:14px;line-height:1.4}
+.bub.me{align-self:flex-end;background:var(--porch);color:var(--porch-ink);border-bottom-right-radius:6px}
+.bub.bot{align-self:flex-start;background:var(--soft);border-bottom-left-radius:6px}
+.who{font-size:11px;font-weight:700;color:var(--ink-3);margin:2px 0 -6px 4px}
+.qa{align-self:flex-start;width:86%;border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:13px}
+.qa dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:4px 10px}
+.qa dt{color:var(--ink-3)} .qa dd{margin:0;font-weight:600}
+.diag{align-self:flex-start;width:92%;border:1.5px solid var(--porch);border-radius:16px;padding:12px;background:var(--phone)}
+.diag h4{margin:0 0 6px;font-size:14px}
+.diag .row{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:5px 0;border-top:1px solid var(--line)}
+.diag .row:first-of-type{border-top:0}
+.diag .row span:first-child{color:var(--ink-2)}
+.diag .row b{text-align:right}
+.typing{align-self:flex-start;background:var(--soft);border-radius:16px;padding:10px 14px;display:flex;gap:4px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--ink-3);animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion: reduce){.typing i{animation:none}}
+.replies{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.reply{border:1.5px solid var(--porch);color:var(--porch);background:var(--phone);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.reply.ghost{border-color:var(--line);color:var(--ink-2)}
+.tool{align-self:flex-start;font-family:var(--mono);font-size:11px;color:var(--ink-2);background:var(--phone);border:1px dashed var(--line);border-radius:10px;padding:6px 9px;max-width:92%;word-break:break-word}
+.tool b{color:var(--tt);font-weight:500}
+.disclose{align-self:flex-start;font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+
+/* pro cards */
+.attrib{font-size:11px;color:var(--ink-3)}
+.attrib b{color:var(--tt);font-weight:700}
+.pros{display:flex;flex-direction:column;gap:8px;align-self:stretch}
+.pro{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:10px;background:var(--phone);text-align:left;width:100%}
+.pro:hover .p-name{text-decoration:underline}
+.avatar{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:14px;flex-shrink:0}
+.p-body{flex:1;min-width:0}
+.p-name{font-weight:700;font-size:14px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-meta{font-size:12.5px;color:var(--ink-2);margin:0}
+.star{color:#C98A00}
+.badge{font-size:10.5px;font-weight:700;color:var(--tt);background:var(--tt-soft);border-radius:6px;padding:1px 6px;margin-left:4px;vertical-align:1px}
+.p-price{font-size:12.5px;font-weight:700;text-align:right;white-space:nowrap}
+.p-price small{display:block;font-weight:500;color:var(--ink-3);font-size:11px}
+
+/* news */
+.kicker{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--news);margin:6px 0 4px}
+.kicker.alert{color:var(--err-ink)}
+.headline{font-family:var(--serif);font-weight:600;font-size:23px;line-height:1.18;margin:0 0 6px;text-wrap:balance}
+.dek{font-size:13.5px;color:var(--ink-2);margin:0 0 8px}
+.byline{font-size:11.5px;color:var(--ink-3);margin:0 0 10px}
+.hero{aspect-ratio:16/9;max-width:100%;border-radius:12px;margin-bottom:10px;display:grid;place-items:center}
+.hero svg{width:64px;height:64px}
+.article p.body{font-family:var(--serif);font-size:15.5px;line-height:1.5;margin:0 0 10px}
+.module{border-top:2px solid var(--ink);margin-top:14px;padding-top:10px}
+.module-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.module h3{font-size:15.5px;margin:0;line-height:1.3}
+.cats{display:flex;gap:6px;overflow-x:auto;margin:10px 0;padding-bottom:2px}
+.cat{border:1px solid var(--line);background:var(--phone);border-radius:999px;padding:6px 11px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.cat[aria-pressed="true"]{background:var(--ink);color:var(--phone);border-color:var(--ink)}
+.task{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line);align-items:center}
+.task:first-of-type{border-top:0}
+.task b{font-size:14px;display:block}
+.task span{font-size:12.5px;color:var(--ink-2)}
+.task .cost{font-size:12.5px;font-weight:700;white-space:nowrap;text-align:right}
+.linkbtn{background:none;border:0;color:var(--tt);font-weight:700;font-size:12.5px;padding:2px 0}
+.related{margin-top:16px;border-top:1px solid var(--line);padding-top:10px}
+.related p{margin:0 0 8px;font-family:var(--serif);font-size:14.5px}
+
+/* states */
+.state{border-radius:12px;padding:12px;font-size:13px}
+.state.empty{background:var(--soft);color:var(--ink-2)}
+.state.err{background:var(--err-soft);color:var(--err-ink)}
+.state.ok{background:var(--ok-soft);color:var(--ok)}
+.skel{height:58px;border-radius:12px;background:var(--soft);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.5}}
+@media (prefers-reduced-motion: reduce){.skel{animation:none}}
+
+/* sheet */
+.sheet-bg{position:absolute;inset:0;background:rgba(10,14,20,.45);display:flex;align-items:flex-end;z-index:5}
+.sheet{background:var(--phone);width:100%;border-radius:22px 22px 0 0;padding:16px 18px 22px;max-height:88%;overflow-y:auto}
+.sheet .grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 12px}
+.sheet .tt-bar{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--tt);margin-bottom:8px}
+.sheet h3{margin:0 0 4px;font-size:17px}
+.sub{font-size:13px;color:var(--ink-2);margin:0}
+.fields{margin:12px 0 0;display:flex;flex-direction:column;gap:8px}
+.field{border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.field div{font-size:14px;font-weight:600}
+.field .pf{font-size:10.5px;font-weight:700;color:var(--porch);margin-left:6px;text-transform:none;letter-spacing:0}
+.url{font-family:var(--mono);font-size:10.5px;background:var(--soft);border-radius:10px;padding:8px 10px;word-break:break-all;color:var(--ink-2);margin-top:10px}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:12px;font-weight:700;font-size:15px;margin-top:10px;text-align:center;text-decoration:none}
+.btn-tt{background:var(--tt);color:var(--tt-ink)}
+.btn-porch{background:var(--porch);color:var(--porch-ink)}
+.btn-ghost{background:var(--soft);color:var(--ink)}
+.btn[disabled]{opacity:.6;cursor:progress}
+
+/* panel */
+.panel{background:var(--phone);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}
+.panel h2{font-size:19px;margin:0 0 2px}
+.panel .hint{color:var(--ink-2);font-size:13.5px;margin:0 0 16px;max-width:70ch}
+.panel h3{font-size:13px;margin:20px 0 8px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
+.controls{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:6px}
+.ctl label,.ctl .lbl{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:4px}
+select,input[type=number]{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--phone);color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--phone);color:var(--ink-2);padding:7px 12px;font-size:13.5px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--phone);font-weight:600}
+.req{font-family:var(--mono);font-size:11.5px;line-height:1.55;background:var(--soft);border-radius:10px;padding:10px 12px;overflow-x:auto;white-space:pre;color:var(--ink-2);margin:0 0 10px;max-height:260px;overflow-y:auto}
+.req b{color:var(--tt);font-weight:500}
+textarea{width:100%;min-height:300px;font-family:var(--mono);font-size:12px;line-height:1.55;background:var(--code-bg);color:var(--code-ink);border:0;border-radius:12px;padding:14px;resize:vertical;tab-size:2}
+.row-actions{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.pbtn{border:1px solid var(--line);background:var(--phone);color:var(--ink);border-radius:10px;padding:8px 14px;font-weight:600;font-size:13.5px}
+.pbtn.main{background:var(--ink);color:var(--phone);border-color:var(--ink)}
+.msg{font-size:13px}
+.msg.ok{color:var(--ok)} .msg.bad{color:var(--err-ink)}
+.log ol{list-style:none;margin:0;padding:0;font-family:var(--mono);font-size:11.5px;max-height:190px;overflow-y:auto;background:var(--soft);border-radius:10px}
+.log li{padding:6px 10px;border-top:1px solid var(--line);color:var(--ink-2);word-break:break-word}
+.log li:first-child{border-top:0}
+.log li span{color:var(--tt)}
+.log li.none{color:var(--ink-3)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;font-size:13px;width:100%;min-width:440px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--ink-2);font-weight:600}
+td code{color:var(--tt);font-size:12px}
+.brief{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:620px){.brief{grid-template-columns:minmax(0,1fr)}}
+.brief div{background:var(--soft);border-radius:12px;padding:12px}
+.brief b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);margin-bottom:4px}
+.brief p{margin:0;font-size:13.5px}
+.note{font-size:12.5px;color:var(--ink-3);margin:8px 0 0}
+
+section.compare{margin-top:40px;background:var(--phone);border:1px solid var(--line);border-radius:18px;padding:20px}
+section.compare h2{font-size:19px;margin:0 0 4px}
+section.compare > p{margin:0 0 14px;color:var(--ink-2);max-width:72ch}
+section.compare td:first-child{font-weight:600;color:var(--ink-2)}
+section.compare th.on{color:var(--ink)}
+
+/* ---- partner brand layer (values come from partners/<slug>/partner.json) ---- */
+.screen[data-app="news"]{font-family:var(--news-font)}
+.screen[data-app="assistant"]{font-family:var(--assist-font)}
+.screen[data-app="news"] .status,.screen[data-app="news"] .appbar{background:var(--news-bar);color:var(--news-bar-ink)}
+.screen[data-app="news"] .appbar{border-bottom-color:transparent}
+.screen[data-app="news"] .appbar .chip{background:var(--news-bar-chip);color:var(--news-bar-ink)}
+.screen[data-app="news"] .appbar .restart{border-color:var(--news-bar-chip);color:var(--news-bar-ink)}
+.logo.news{font-family:var(--news-logo-font);font-weight:var(--news-logo-weight);color:var(--news-bar-ink);font-size:20px;letter-spacing:-0.01em}
+.headline{font-family:var(--news-headline-font)}
+.article p.body{font-family:var(--news-body-font)}
+.related p{font-family:var(--news-body-font)}
+.screen[data-app="news"] .tabbar span.on{color:var(--news)}
+.screen[data-app="news"] .module{border-top-color:var(--news)}
+.screen[data-app="news"] .cat[aria-pressed="true"]{background:var(--news);border-color:var(--news);color:var(--news-on)}
+.logo.porch{font-family:var(--assist-font);font-weight:700;color:var(--assist-logo)}
+.screen[data-app="assistant"] .tabbar span.on{color:var(--porch)}
+.bub.me{background:var(--assist-me);color:var(--assist-me-ink)}
+.reply{border-radius:var(--assist-radius)}
+.btn-porch{background:var(--assist-cta);color:var(--assist-cta-ink);border-radius:var(--assist-radius)}
+.diag{border-color:var(--porch)}
+.tt-auth-url{display:flex;align-items:center;justify-content:center;gap:5px;font-size:11.5px;color:var(--ink-2);background:var(--soft);border-radius:8px;padding:5px 8px;margin:0 0 12px}
+.tt-auth-acct{font-size:13px;font-weight:600;border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:10px 0}
+.tt-auth-perm{margin:0 0 6px;padding-left:18px;font-size:13px;color:var(--ink)}
+.tt-auth-perm li{margin:3px 0}
+/* ---- marketplace app layer (OfferUp-style; values come from partners/<slug>/partner.json) ---- */
+.screen{font-family:var(--ou-font)}
+.screen[data-app="market"] .status,.screen[data-app="market"] .appbar{background:var(--ou);color:var(--ou-on)}
+.screen[data-app="market"] .appbar{border-bottom-color:transparent}
+.screen[data-app="market"] .appbar .chip{background:rgba(255,255,255,.22);color:var(--ou-on)}
+.screen[data-app="market"] .appbar .restart{border-color:rgba(255,255,255,.4);color:var(--ou-on)}
+.screen[data-app="market"] .tabbar span.on{color:var(--ou)}
+.logo.ou{font-family:var(--ou-font);font-weight:900;font-size:21px;letter-spacing:-0.02em;color:var(--ou-on)}
+.logo.porch{font-family:var(--ou-font);font-weight:900;color:var(--assist-logo)}
+.bub.me{background:var(--assist-me);color:var(--assist-me-ink)}
+.reply{border-radius:var(--assist-radius);border-color:var(--ou);color:var(--ou-dark)}
+.reply.ghost{border-color:var(--line);color:var(--ink-2)}
+.btn-ou{background:var(--ou);color:var(--ou-on);border-radius:999px}
+.ou-search{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:14px;color:var(--ink)}
+.ou-search svg{color:var(--ink-3);flex-shrink:0}
+.ou-tabs{display:flex;gap:18px;border-bottom:1px solid var(--line);margin:8px -14px 12px;padding:0 14px}
+.ou-tabs span{padding:8px 0;font-size:13.5px;font-weight:700;color:var(--ink-3)}
+.ou-tabs span.on{color:var(--ink);box-shadow:inset 0 -2.5px 0 var(--ou)}
+.ou-h{font-size:16px;font-weight:900;margin:2px 0 8px}
+.ou-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--phone);margin-bottom:12px}
+.ou-card.tt{border:1.5px solid var(--tt);background:linear-gradient(var(--tt-soft),var(--phone) 70%)}
+.ou-card h4{margin:0 0 3px;font-size:15px}
+.ou-card p{margin:0;font-size:13px;color:var(--ink-2)}
+.ou-card .btn{margin-top:10px}
+.ou-item{display:flex;gap:10px;align-items:center}
+.ou-thumb{width:56px;height:56px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;font-weight:900;font-size:12px}
+.ou-item b{display:block;font-size:14px}
+.ou-item span{font-size:12.5px;color:var(--ink-2)}
+.ou-price{font-weight:900;font-size:15px}
+.ou-sys{text-align:center;font-size:11.5px;color:var(--ink-3);margin:6px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.opt{border:1.5px solid var(--line);background:var(--phone);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700}
+.opt[aria-pressed="true"]{border-color:var(--ou);background:var(--ou-soft);color:var(--ou-dark)}
+.q{font-size:13px;font-weight:700;color:var(--ink-2);margin:10px 0 0}
+.bigprice{font-size:34px;font-weight:900;letter-spacing:-0.02em;margin:4px 0}
+.lines{font-size:13px;border-top:1px solid var(--line);margin-top:8px}
+.lines div{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
+.lines span{color:var(--ink-2)}
+.fine{font-size:11.5px;color:var(--ink-3);margin:8px 0 0}
+.ib-chips{display:flex;gap:6px;margin:0 0 6px}
+.ib-row{display:flex;gap:10px;align-items:center;padding:11px 0;border:0;border-top:1px solid var(--line);background:none;width:100%;text-align:left}
+.ib-row:first-of-type{border-top:0}
+.ib-row .p-body b{font-size:14px;display:block}
+.ib-row .p-body span{font-size:12.5px;color:var(--ink-2);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib-row.unread .p-body span{color:var(--ink);font-weight:700}
+.ib-row time{font-size:11px;color:var(--ink-3);align-self:flex-start;white-space:nowrap}
+.ib-row .p-body span.ttpill{display:inline;font-size:10.5px;color:var(--tt);font-weight:700;white-space:nowrap}
+.push .tt-bar{flex-shrink:0;margin:0}
+.udot{width:9px;height:9px;border-radius:50%;background:var(--ou);flex-shrink:0}
+.ttpill{font-size:10.5px;font-weight:700;color:var(--tt);background:var(--tt-soft);border-radius:6px;padding:1px 6px;margin-left:4px;vertical-align:1px}
+.push{display:flex;gap:8px;align-items:center;background:var(--soft);border-radius:14px;padding:9px 11px;font-size:12.5px;margin-bottom:10px}
+.thead{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.thead b{display:block;font-size:15px}
+.thead span{font-size:12px;color:var(--ink-2)}
+.ctx{border:1px solid var(--line);border-radius:12px;padding:9px 11px;font-size:12.5px;color:var(--ink-2);margin-bottom:10px}
+.ctx b{color:var(--ink)}
+.switch .rec.dev{color:var(--warn-ink);background:var(--warn-soft)}
+.switch .rec.new{color:var(--tt);background:var(--tt-soft)}
+:root{--ou:#00A87E;--ou-dark:#00865F;--ou-on:#FFFFFF;--ou-soft:#E5F6F1;--ou-font:"Lato", "Helvetica Neue", Arial, sans-serif;--porch:#00A87E;--porch-ink:#FFFFFF;--porch-soft:#E5F6F1;--assist-font:"Lato", "Helvetica Neue", Arial, sans-serif;--assist-logo:#00865F;--assist-me:#00A87E;--assist-me-ink:#FFFFFF;--assist-cta:#00A87E;--assist-cta-ink:#FFFFFF;--assist-radius:999px;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ou:#00986A;--ou-dark:#43B893;--ou-on:#FFFFFF;--ou-soft:#0F3329;--porch:#43B893;--porch-ink:#06231A;--porch-soft:#0F3329;--assist-logo:#43B893;--assist-me:#00986A;--assist-me-ink:#FFFFFF;--assist-cta:#00986A;--assist-cta-ink:#FFFFFF;}}
+:root[data-theme="dark"]{--ou:#00986A;--ou-dark:#43B893;--ou-on:#FFFFFF;--ou-soft:#0F3329;--porch:#43B893;--porch-ink:#06231A;--porch-soft:#0F3329;--assist-logo:#43B893;--assist-me:#00986A;--assist-me-ink:#FFFFFF;--assist-cta:#00986A;--assist-cta-ink:#FFFFFF;}
+</style>
+
+<div class="shell">
+  <header class="top">
+    <p class="internal">Concept mockup by Thumbtack · not a OfferUp product · screens are illustrative</p>
+    <p class="eyebrow">Thumbtack Partner Platform · OfferUp concept prototype</p>
+    <h1>More revenue per visit from OfferUp Services</h1>
+    <p>Three ways OfferUp could earn more from the home-services traffic it already sends Thumbtack: a call center hand-off, fixed-price Preset Jobs, and pro replies in the OfferUp inbox. Screens are styled after the partner's apps to show fit; they are a Thumbtack sketch, not the partner's real design. Each phone renders from the mock API response on the right, so you can edit the JSON, change ZIP codes, and force empty or error states.</p>
+  </header>
+
+  <div class="switch" role="tablist" aria-label="Integration options">
+    <button role="tab" id="tab-a" data-opt="a" aria-selected="true" aria-controls="stage"><span class="k">A</span><span><span class="t">Call center hand-off<span class="rec">Pilot first</span></span><span class="d">Tap to call from OfferUp Services. The lead reaches Thumbtack’s team before the call does.</span></span></button>
+    <button role="tab" id="tab-b" data-opt="b" aria-selected="false" aria-controls="stage"><span class="k">B</span><span><span class="t">Preset Jobs in the app<span class="rec dev">In development</span></span><span class="d">Fixed-price TV mounting, cleaning, junk removal and handyman, booked and paid in OfferUp.</span></span></button>
+    <button role="tab" id="tab-c" data-opt="c" aria-selected="false" aria-controls="stage"><span class="k">C</span><span><span class="t">Pro replies in the OfferUp inbox<span class="rec new">First partner test</span></span><span class="d">Thumbtack pro messages land beside buy and sell chats, and replies go straight back.</span></span></button>
+  </div>
+
+  <div class="wrap" id="stage" role="tabpanel" aria-labelledby="tab-a">
+    <div>
+      <div class="device">
+        <div class="screen" id="screen">
+          <div class="status"><span>9:41</span><span>5G</span></div>
+          <div class="appbar" id="appbar"></div>
+          <main class="view" id="view" aria-live="polite"></main>
+          <nav class="tabbar" id="tabbar" aria-hidden="true"></nav>
+        </div>
+      </div>
+    </div>
+
+    <section class="panel" aria-labelledby="pTitle">
+      <h2 id="pTitle"></h2>
+      <p class="hint" id="pHint"></p>
+      <div class="controls" id="controls"></div>
+
+      <h3>Request</h3>
+      <div class="req" id="reqLine">Waiting for the first call…</div>
+
+      <h3 id="jsonTitle">Mock response</h3>
+      <label for="json" class="sr">Mock response JSON</label>
+      <textarea id="json" spellcheck="false"></textarea>
+      <div class="row-actions">
+        <button class="pbtn main" id="applyBtn">Apply and replay</button>
+        <button class="pbtn" id="resetBtn">Reset mock</button>
+        <span class="msg" id="jsonMsg" role="status"></span>
+      </div>
+
+      <div class="log">
+        <h3>Event log</h3>
+        <ol id="log"></ol>
+      </div>
+
+      <h3>What renders from where</h3>
+      <div class="tablewrap"><table><thead><tr><th>On screen</th><th>Source</th></tr></thead><tbody id="mapping"></tbody></table></div>
+
+      <h3>Why this option</h3>
+      <div class="brief" id="brief"></div>
+      <p class="note">Colors and fonts approximated from offerup.com on 2026-11-25. Not official brand assets. Endpoint paths and MCP tool names follow the Thumbtack Partner Platform docs as of the API snapshot. Some response fields, prices and pro names are illustrative; confirm exact schemas in the developer portal before build.</p>
+    </section>
+  </div>
+
+  <section class="compare" aria-labelledby="cmpTitle">
+    <h2 id="cmpTitle">The three options side by side</h2>
+    <p>OfferUp already sends Thumbtack requests through Find Pros and Requests. A and C raise what those requests earn by cutting the pros contacted per request and the replies that go unread. B adds a new kind of revenue: a paid, booked job to one pro.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th data-col="a">A · Call center</th><th data-col="b">B · Preset Jobs</th><th data-col="c">C · Inbox messaging</th></tr></thead>
+        <tbody>
+          <tr><td>Entry point</td><td>Services search, tap to call</td><td>TV purchase, stale listing, Services</td><td>After a request is sent</td></tr>
+          <tr><td>What it fixes</td><td>Too many pros per request</td><td>Leads that get refunded</td><td>Replies that go unread</td></tr>
+          <tr><td>Revenue shape</td><td>Per request, higher value</td><td>Share of a paid booking</td><td>Same request, more hires</td></tr>
+          <tr><td>Thumbtack surfaces</td><td>Call center (lead webhook, human line, AI line), Requests</td><td>MCP Preset Job toolset</td><td>Messages API, <code>messageSentV4</code> webhook, Requests</td></tr>
+          <tr><td>Status</td><td>Live</td><td>In development</td><td>Documented, first partner test</td></tr>
+          <tr><td>OfferUp builds</td><td>A button, one webhook, a transfer</td><td>Booking flow, payment token</td><td>Webhook receiver, inbox thread type</td></tr>
+          <tr><td>Effort</td><td>Low</td><td>Medium</td><td>Medium</td></tr>
+          <tr><td>Time to first data (estimate)</td><td>4–6 weeks</td><td>8–12 weeks after enablement</td><td>6–8 weeks</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var view = $("view"), screen = $("screen");
+  var UTM = "utm_source=cma-offerup-demo&utm_medium=partnership";
+  function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+  function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+  var ZIPS = {
+    "98101": { city:"Seattle", st:"wa", label:"98101 · Seattle, WA" },
+    "30307": { city:"Atlanta", st:"ga", label:"30307 · Atlanta, GA" },
+    "59001": { city:"Absarokee", st:"mt", label:"59001 · Absarokee, MT (no pros)" }
+  };
+  var seq = 4820193847;
+  function pro(zip, cat, name, rating, reviews, top, from, resp){
+    var z = ZIPS[zip]; var id = "4759999269218" + String(seq++).slice(-6);
+    return { businessID:id, businessName:name, rating:rating, numberOfReviews:reviews, isTopPro:top, startingPrice:from, responseTimeHours:resp,
+      widgets:{
+        servicePageURL:"https://www.thumbtack.com/" + z.st + "/" + slug(z.city) + "/" + slug(cat) + "/" + slug(name) + "/service/" + id + "?" + UTM,
+        requestFlowURL:"https://www.thumbtack.com/embed/request-flow?business_pk=" + id + "&zip_code=" + zip + "&" + UTM
+      } };
+  }
+  var PALETTE = [["#E3F3F0","#0B5E52"],["#E6F2FA","#0A5A8A"],["#F4ECFB","#5B2E8C"],["#FFF1E3","#8A4B0A"],["#EDF1F5","#3A4656"]];
+  function avatar(name){
+    var parts = String(name).replace(/[^A-Za-z0-9 ]/g,"").split(/\s+/).filter(Boolean);
+    var ini = ((parts[0]||"?")[0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
+    var h = 0; for (var i=0;i<name.length;i++) h = (h*31 + name.charCodeAt(i)) >>> 0;
+    var c = PALETTE[h % PALETTE.length];
+    return '<div class="avatar" aria-hidden="true" style="background:'+c[0]+';color:'+c[1]+'">'+esc(ini)+'</div>';
+  }
+  function proCard(p, dataAttr, priceHTML){
+    return '<button class="pro" '+dataAttr+'="'+esc(p.businessID)+'">' + avatar(p.businessName) +
+      '<div class="p-body"><p class="p-name">'+esc(p.businessName)+(p.isTopPro?'<span class="badge">Top Pro</span>':'')+'</p>' +
+      '<p class="p-meta"><span class="star">★</span> '+esc(Number(p.rating).toFixed(1))+' ('+esc(p.numberOfReviews)+' reviews)</p>' +
+      '<p class="p-meta">Responds in about '+esc(p.responseTimeHours)+' hr</p></div>' +
+      (priceHTML || '<div class="p-price">From $'+esc(p.startingPrice)+'<small>starting price</small></div>') + '</button>';
+  }
+  function skel(n){ var s=""; for (var i=0;i<n;i++) s += '<div class="skel" aria-hidden="true"></div>'; return s; }
+  function typing(){ return '<div class="typing" aria-label="Typing"><i></i><i></i><i></i></div>'; }
+  function scrollEnd(){ requestAnimationFrame(function(){ view.scrollTop = view.scrollHeight; }); }
+  function scrollTop(){ requestAnimationFrame(function(){ view.scrollTop = 0; }); }
+  var SEARCH_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+  function marketBar(zip){
+    $("appbar").innerHTML = '<span class="logo ou">OfferUp</span><span class="spacer"></span><span class="chip">'+esc(ZIPS[zip].city)+' '+esc(zip)+'</span><button class="restart" data-restart>Restart</button>';
+  }
+  function marketTabs(on){
+    $("tabbar").innerHTML = ["Home","Inbox","Post","Selling","Account"].map(function(t){ return '<span'+(t===on?' class="on"':'')+'>'+t+'</span>'; }).join("");
+  }
+  function dayLabel(d){ return d.toLocaleDateString("en-US", { weekday:"short", month:"short", day:"numeric" }); }
+  function iso(d, h){ var x = new Date(d); x.setHours(h,0,0,0); var off = -x.getTimezoneOffset(), sg = off >= 0 ? "+" : "-", a = Math.abs(off);
+    return x.getFullYear()+"-"+("0"+(x.getMonth()+1)).slice(-2)+"-"+("0"+x.getDate()).slice(-2)+"T"+("0"+h).slice(-2)+":00:00"+sg+("0"+Math.floor(a/60)).slice(-2)+":"+("0"+a%60).slice(-2); }
+
+  /* ------------ shared mock transport ------------ */
+  function mockCall(opt, producer){
+    return new Promise(function(resolve, reject){
+      setTimeout(function(){
+        if (opt.s.mode === "error") { reject({ status:503, title:"Service Unavailable", detail:"Upstream timeout", traceID:"mock-" + Date.now() }); return; }
+        try { resolve(clone(producer())); } catch (e) { reject({ status:"invalid", detail:String(e.message || e) }); }
+      }, opt.s.latency);
+    });
+  }
+  function setReq(html){ $("reqLine").innerHTML = html; }
+  function jsonBlock(o){ return esc(JSON.stringify(o, null, 2)); }
+
+  var logs = { a:[], b:[], c:[] };
+  var cur = "a";
+  function log(key, name, detail){
+    var t = new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    var list = logs[key] = logs[key] || [];
+    list.unshift({ t:t, name:name, detail:detail || "" });
+    if (list.length > 50) list.pop();
+    if (OPTS[cur] && key === OPTS[cur].key) drawLog();
+  }
+  function drawLog(){
+    var items = logs[OPTS[cur].key] || [];
+    $("log").innerHTML = items.length ? items.map(function(e){ return '<li>'+esc(e.t)+' <span>'+esc(e.name)+'</span> '+esc(e.detail)+'</li>'; }).join("") : '<li class="none">No events yet.</li>';
+  }
+
+  /* ------------ sheet ------------ */
+  var closeSheet = null;
+  function openSheet(html, onClick, onClose){
+    if (closeSheet) closeSheet(true);
+    var bg = document.createElement("div");
+    bg.className = "sheet-bg";
+    bg.innerHTML = '<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="grab"></div>' + html + '</div>';
+    screen.appendChild(bg);
+    var first = bg.querySelector("button, a"); if (first) first.focus();
+    function onKey(e){ if (e.key === "Escape") close(); }
+    function close(silent){ bg.remove(); document.removeEventListener("keydown", onKey); closeSheet = null; if (!silent && onClose) onClose(); }
+    closeSheet = close;
+    document.addEventListener("keydown", onKey);
+    bg.addEventListener("click", function(e){
+      if (e.target === bg || e.target.closest("[data-close]")) { close(); return; }
+      if (onClick) onClick(e, close, bg);
+    });
+    return bg;
+  }
+  var TT_BAR = '<div class="tt-bar"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><path d="M7 8h10M12 8v9" style="stroke:var(--phone)" stroke-width="2.4" stroke-linecap="round"/></svg>Thumbtack</div>';
+
+
+  /* ------------ Thumbtack homeowner authorization (shared) ------------
+     build.py fills TT_AUTH from platform/thumbtack-auth.json. To change the experience,
+     edit that file. A new "experience" key needs a renderer in TT_AUTH_UI below.
+     ttAuthorize(o) returns a Promise of { access_token, ... } or rejects with { status:"cancelled" }.
+     o = { key: option key for the event log, clientId: partner OAuth client id } */
+  var TT_AUTH = {"about": "How a homeowner authorizes a partner to send a request or book a Preset (fixed-price) Job through Thumbtack's API or MCP server. Single source of truth for every prototype, deck and skill step. When Thumbtack changes the experience, update this file (and add a renderer in templates/partials/thumbtack-auth.js if the experience key is new), then rebuild every partner.", "verified": "2026-11-25", "source": "https://developers.thumbtack.com/docs/getting-started/authentication", "experience": "oauth2_authorization_code", "label": "OAuth 2.0 authorization code (homeowner signs in to Thumbtack)", "appliesTo": "Sending a request (create_request, POST /api/v4/requests) or booking a Preset Job (book_preset_job) on the homeowner's behalf", "appAuth": {"label": "app-level OAuth client credentials", "appliesTo": "Search, refine, reviews and categories. No homeowner sign-in."}, "authorizeUrl": "https://auth.thumbtack.com/oauth2/auth", "tokenUrl": "https://auth.thumbtack.com/oauth2/token", "audience": "urn:partner-api", "redirectUri": "https://partner.example/oauth/thumbtack/callback", "scopes": ["demand::requests", "demand::bookings", "offline_access"], "scopesNote": "Scope names other than offline_access are illustrative. Real per-endpoint scopes are in the API Reference.", "accessTokenSeconds": 3600, "refreshTokenDays": 180, "consent": {"title": "Sign in to Thumbtack", "subtitle": "OfferUp wants to send requests and book jobs for you.", "account": "Jordan Lee · jordan@example.com", "permissions": ["Send your project details to pros you approve", "Book fixed-price visits you approve", "See replies and bookings for those requests"], "note": "OfferUp still asks you before every request or booking.", "allow": "Allow", "working": "Connecting…", "cancel": "Cancel", "connected": "Connected to Thumbtack as Jordan Lee"}, "unconfirmed": ["The portal shows a user-level token on POST /api/v4/requests but does not say which flow the MCP server uses for create_request or book_preset_job.", "Consent screen copy and layout are a Thumbtack sketch, not the real auth.thumbtack.com page."]};
+  function ttRand(){ return Math.random().toString(36).slice(2, 10); }
+  function ttHost(u){ return String(u).replace(/^https?:\/\//, "").split("/")[0]; }
+  var TT_AUTH_UI = {
+    oauth2_authorization_code: function(o){
+      var a = TT_AUTH, c = a.consent, state = ttRand();
+      var q = "response_type=code&client_id=" + encodeURIComponent(o.clientId) + "&redirect_uri=" + encodeURIComponent(a.redirectUri) +
+        "&scope=" + encodeURIComponent(a.scopes.join(" ")) + "&state=" + state + (a.audience ? "&audience=" + encodeURIComponent(a.audience) : "");
+      setReq('<b>GET</b> ' + esc(a.authorizeUrl) + '?' + esc(q) + '\n\n// ' + esc(a.label) + '\n// Opens in a secure browser sheet. ' + esc(a.scopesNote));
+      log(o.key, "oauth_authorize", "client_id=" + o.clientId + " scope=" + a.scopes.join(" "));
+      return new Promise(function(ok, no){
+        var settled = false;
+        var html = '<div class="tt-auth-url"><svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1h1Zm2 0h6V7a3 3 0 0 0-6 0v3Z"/></svg>' + esc(ttHost(a.authorizeUrl)) + '</div>' +
+          TT_BAR + '<h3 id="sheetTitle">' + esc(c.title) + '</h3><p class="sub">' + esc(c.subtitle) + '</p>' +
+          '<div class="tt-auth-acct">' + esc(c.account) + '</div>' +
+          '<ul class="tt-auth-perm">' + c.permissions.map(function(p){ return '<li>' + esc(p) + '</li>'; }).join("") + '</ul>' +
+          '<p class="sub">' + esc(c.note) + '</p>' +
+          '<button class="btn btn-tt" data-connect>' + esc(c.allow) + '</button><button class="btn btn-ghost" data-close>' + esc(c.cancel) + '</button>';
+        openSheet(html, function(e, close){
+          var b = e.target.closest("[data-connect]"); if (!b) return;
+          b.disabled = true; b.textContent = c.working;
+          var code = "code_" + ttRand();
+          log(o.key, "oauth_consent", "granted, code returned to " + ttHost(a.redirectUri));
+          setReq('<b>POST</b> ' + esc(a.tokenUrl) + '  (partner server, never the phone)\n' +
+            jsonBlock({ grant_type:"authorization_code", code:code, redirect_uri:a.redirectUri, client_id:o.clientId, client_secret:"(server side only)" }));
+          setTimeout(function(){
+            var tok = { access_token:"tt_at_" + ttRand(), token_type:"Bearer", expires_in:a.accessTokenSeconds, refresh_token:"tt_rt_" + ttRand(), scope:a.scopes.join(" ") };
+            log(o.key, "oauth_token", "expires_in=" + a.accessTokenSeconds + "s, refresh up to " + a.refreshTokenDays + " days");
+            settled = true; close(true); ok(tok);
+          }, 700);
+        }, function(){ if (!settled) { log(o.key, "oauth_cancelled", "nothing sent"); no({ status:"cancelled" }); } });
+      });
+    }
+  };
+  function ttAuthorize(o){ return TT_AUTH_UI[TT_AUTH.experience](o); }
+
+  /* =========================================================
+     OPTION A · call center hand-off (App channel; Call channel comes from calls.json)
+     ========================================================= */
+  function aDefaults(){
+    return {
+      "98101": { searchID:"srch_a_98101", data:[
+        pro("98101","TV Mounting","Emerald City Mounting",4.9,318,true,89,1),
+        pro("98101","TV Mounting","Puget Sound TV Install",4.8,204,true,99,1),
+        pro("98101","TV Mounting","Rainier Home Tech",4.7,96,false,79,2)
+      ], metadata:{ categoryID:"cat_tv_mounting", categoryName:"TV Mounting", zipCode:"98101" } },
+      "30307": { searchID:"srch_a_30307", data:[
+        pro("30307","TV Mounting","Little Five Points AV",4.9,141,true,85,1),
+        pro("30307","TV Mounting","Candler Park Installs",4.7,58,false,95,2)
+      ], metadata:{ categoryID:"cat_tv_mounting", categoryName:"TV Mounting", zipCode:"30307" } },
+      "59001": { searchID:"srch_a_59001", data:[], metadata:{ categoryID:"cat_tv_mounting", categoryName:"TV Mounting", zipCode:"59001" } }
+    };
+  }
+  var A = {
+    key:"a",
+    title:"Option A · Call center hand-off",
+    hint:"OfferUp already shows Thumbtack pros in Services. This adds a tap to call. OfferUp sends the lead with the job and ZIP, then transfers the call, so Thumbtack’s team greets the customer by name and sends the job to fewer, better-fit pros. Switch Channel to Call to hear it.",
+    jsonTitle:"Mock response · POST /api/v4/businesses/search",
+    s:{ zip:"98101", mode:"ok", latency:600, step:"idle", pros:[], run:0 },
+    mocks:aDefaults(),
+    controls: function(){
+      var z = Object.keys(ZIPS).map(function(k){ return '<option value="'+k+'"'+(k===A.s.zip?' selected':'')+'>'+esc(ZIPS[k].label)+'</option>'; }).join("");
+      return ctlZip("a-zip", z) + ctlMode("a") + ctlLatency("a-lat", A.s.latency);
+    },
+    bind: function(){
+      $("a-zip").onchange = function(){ A.s.zip = this.value; showJson(); A.start(); };
+      bindMode(A); bindLatency("a-lat", A);
+    },
+    getMock: function(){ return A.mocks[A.s.zip]; },
+    setMock: function(b){ A.mocks[A.s.zip] = b; },
+    resetMocks: function(){ A.mocks = aDefaults(); },
+    validate: validatePros,
+    mapping:[
+      ["Services search and Thumbtack pro cards","Find Pros, <code>POST /api/v4/businesses/search</code> (already live in OfferUp)"],
+      ["“Talk to a pro advisor” card","OfferUp (partner side). Shown only when Find Pros returns pros for the ZIP"],
+      ["Call sheet: job, ZIP, verified phone","OfferUp account and search. Sent as the lead before the transfer"],
+      ["The call itself","Thumbtack call center: human team during staffed hours, the AI line at any time (Channel: Call)"],
+      ["Attribution","Lead tagged with OfferUp’s link (human), or OfferUp’s own Thumbtack AI number (AI)"]
+    ],
+    brief:[
+      ["OfferUp gets","A phone option it doesn’t staff, and higher-value requests from visits it already has."],
+      ["Thumbtack gets","Consented, scoped requests matched by a person, sent to fewer pros, so fewer refunds."],
+      ["Customer gets","A real conversation on mobile, where most OfferUp traffic is, instead of a long form."],
+      ["Effort: low","A button, one lead webhook and a call transfer. The AI line needs no webhook at all."]
+    ],
+    start: function(){
+      if (closeSheet) closeSheet(true);
+      var run = ++A.s.run; A.s.step = "loading"; A.s.pros = []; A.s.impr = false;
+      log("a","services_search","query=tv mounting zip="+A.s.zip);
+      var body = { searchQuery:"TV mounting", zipCode:A.s.zip, utmData:{ utm_source:"cma-offerup-demo" }, limit:3 };
+      setReq('<b>POST</b> /api/v4/businesses/search\n' + jsonBlock(body) + '\n// client credentials token. Already live in OfferUp today.');
+      A.render();
+      mockCall(A, A.getMock).then(function(res){
+        if (run !== A.s.run) return;
+        var errs = validatePros(res); if (errs.length) throw { status:"invalid", detail:errs[0] };
+        A.s.pros = res.data; A.s.step = res.data.length ? "results" : "none";
+        log("a","response 200", res.data.length + " pros");
+        A.render();
+      }).catch(function(err){
+        if (run !== A.s.run) return;
+        log("a","response " + (err.status||"error"), (err.detail||"") + " · Thumbtack modules hidden");
+        A.s.step = "error"; A.render();
+      });
+    },
+    render: function(){
+      var s = A.s;
+      marketBar(s.zip); marketTabs("Home");
+      var h = '<div class="ou-search">'+SEARCH_ICON+'<span>TV mounting</span></div>';
+      h += '<div class="ou-tabs"><span>For sale</span><span class="on">Services</span><span>Jobs</span><span>Rentals</span></div>';
+      if (s.step === "loading") h += skel(3);
+      if (s.step === "none") h += '<div class="state empty">No Thumbtack pros near '+esc(s.zip)+' yet. OfferUp shows its own local listings only, and no call option.</div>';
+      if (s.step === "error") h += '<div class="state empty">Thumbtack didn’t answer, so OfferUp hides the pro module and the call option. Nothing looks broken.</div>';
+      if (s.step === "results") {
+        if (!s.impr) { s.impr = true; log("a","call_card_impression","zip="+s.zip); }
+        h += '<div class="ou-card tt">'+TT_BAR+'<h4>Rather talk it through?</h4><p>Thumbtack’s team can find and book a TV mounting pro near you. Free to call.</p>' +
+          '<button class="btn btn-tt" data-a="call">Call a pro advisor</button><p class="fine">Team 8 AM to 8 PM ET. Thumbtack’s AI assistant any time.</p></div>';
+        h += '<p class="ou-h">TV mounting pros near you</p>';
+        h += '<div class="pros"><span class="attrib">Pros from <b>Thumbtack</b></span>' + s.pros.map(function(p){ return proCard(p, "data-apro"); }).join("") + '</div>';
+      }
+      view.innerHTML = h; scrollTop();
+    },
+    click: function(e){
+      if (e.target.closest("[data-a=call]")) { A.sheet(); return; }
+      var c = e.target.closest("[data-apro]");
+      if (c) log("a","pro_card_click","business="+c.dataset.apro+" (existing Request Flow)");
+    },
+    sheet: function(){
+      log("a","call_tap","zip="+A.s.zip);
+      var html = TT_BAR + '<h3 id="sheetTitle">Call Thumbtack about TV mounting</h3><p class="sub">OfferUp passes these along so you don’t repeat yourself.</p>' +
+        '<div class="fields">' +
+        '<div class="field"><label>Job<span class="pf">from your search</span></label><div>TV mounting</div></div>' +
+        '<div class="field"><label>ZIP<span class="pf">from OfferUp</span></label><div>'+esc(A.s.zip)+'</div></div>' +
+        '<div class="field"><label>Phone<span class="pf">verified on OfferUp</span></label><div>(555) 555-0142</div></div>' +
+        '</div><p class="sub" style="margin-top:10px">You’ll accept Thumbtack’s Terms of Use on the call before anything is sent to a pro.</p>' +
+        '<button class="btn btn-tt" data-acall>Call now</button><button class="btn btn-ghost" data-close>Not now</button>';
+      openSheet(html, function(e, close){
+        if (!e.target.closest("[data-acall]")) return;
+        log("a","call_start_from_app","switching to Channel: Call");
+        close(true); chan.a = "call"; select("a");
+      });
+    }
+  };
+
+  /* =========================================================
+     OPTION B · Preset Jobs (MCP Preset Job toolset, in development)
+     ========================================================= */
+  var B_SCEN = {
+    tv: { label:"Just bought a TV (inbox)", cat:"TV Mounting", catID:"cat_tv_mounting", cfg:"cfg_tv_mounting_std", base:149, step:20, tab:"Inbox",
+      title:"Get it mounted", pitch:"Fixed-price TV mounting, booked through Thumbtack.",
+      product:{ name:"Samsung 65 in. 4K TV", sku:"ou-item-883412" },
+      qs:[{ id:"q_size", question:"TV size", options:["Up to 54 in.","55 to 69 in.","70 in. or larger"], def:1 },
+          { id:"q_wall", question:"Wall type", options:["Drywall","Brick or concrete","Not sure"], def:0 }],
+      includes:"Mount, level and hide cables on the wall surface. Bracket included." },
+    junk: { label:"Listing didn’t sell (selling)", cat:"Junk Removal", catID:"cat_junk_removal", cfg:"cfg_junk_single", base:129, step:45, tab:"Selling",
+      title:"Haul it away instead", pitch:"Fixed-price junk removal, booked through Thumbtack.",
+      product:{ name:"Gray sectional sofa", sku:"ou-item-771029" },
+      qs:[{ id:"q_load", question:"How much", options:["One large item","Quarter truck","Half truck"], def:0 },
+          { id:"q_where", question:"Where is it", options:["Curbside or garage","Ground floor","Upstairs"], def:1 }],
+      includes:"Load, haul and dispose or donate. Up to 2 movers." },
+    cleaning: { label:"Services tab: house cleaning", cat:"House Cleaning", catID:"cat_house_cleaning", cfg:"cfg_cleaning_std", base:189, step:40, tab:"Home",
+      title:"Book a cleaning", pitch:"Fixed-price house cleaning, booked through Thumbtack.", query:"House cleaning",
+      qs:[{ id:"q_size", question:"Home size", options:["1 bed, 1 bath","2 bed, 1 bath","3 bed, 2 bath"], def:1 },
+          { id:"q_type", question:"Clean type", options:["Standard","Deep clean","Move out"], def:0 }],
+      includes:"Kitchen, bathrooms, dusting, floors and trash. Supplies included." },
+    handyman: { label:"Services tab: handyman", cat:"Handyman", catID:"cat_handyman", cfg:"cfg_handyman_2h", base:170, step:60, tab:"Home",
+      title:"Book a handyman", pitch:"Fixed-price handyman visit, booked through Thumbtack.", query:"Handyman",
+      qs:[{ id:"q_hours", question:"Time needed", options:["1 hour","2 hours","Half day"], def:1 },
+          { id:"q_task", question:"Main task", options:["Furniture assembly","Shelves and art","Small repairs"], def:0 }],
+      includes:"One pro for the time booked. Bring your own parts." }
+  };
+  function bDates(){
+    var out = [], d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate() + 3);
+    for (var i = 0; i < 3; i++) {
+      out.push({ date:iso(d, 0).slice(0,10), slots:[{ startTime:iso(d, 8), endTime:iso(d, 10) }, { startTime:iso(d, 12), endTime:iso(d, 14) }] });
+      d.setDate(d.getDate() + 1);
+    }
+    return out;
+  }
+  function bDefaults(){
+    var z = {};
+    Object.keys(ZIPS).forEach(function(k){
+      z[k] = {};
+      Object.keys(B_SCEN).forEach(function(sk){
+        var sc = B_SCEN[sk], none = k === "59001";
+        z[k][sk] = {
+          availability:{ available:!none, eligibleProCount:none ? 0 : (k === "98101" ? 14 : 6), categoryID:sc.catID, configurationID:sc.cfg, zipCode:k },
+          availableDates: none ? [] : bDates(),
+          pricing:{ searchID:"srch_pj_" + k + "_" + sk, price:"$" + sc.base + ".00" }
+        };
+      });
+    });
+    return z;
+  }
+  var B = {
+    key:"b",
+    title:"Option B · Preset Jobs, booked in OfferUp",
+    hint:"A fixed-price card appears at the moment it fits: after a TV purchase, on a listing that won’t sell, or in Services. The customer answers two questions, picks a time, sees the price and books. One Thumbtack pro is matched and the job is paid. The Preset Job toolset is in development.",
+    jsonTitle:"Mock MCP results · availability, times, pricing",
+    s:{ zip:"98101", scen:"tv", mode:"ok", latency:600, step:"idle", answers:{}, slot:0, price:null, run:0, token:null, note:"" },
+    mocks:bDefaults(),
+    controls: function(){
+      var z = Object.keys(ZIPS).map(function(k){ return '<option value="'+k+'"'+(k===B.s.zip?' selected':'')+'>'+esc(ZIPS[k].label)+'</option>'; }).join("");
+      var sc = Object.keys(B_SCEN).map(function(k){ return '<option value="'+k+'"'+(k===B.s.scen?' selected':'')+'>'+esc(B_SCEN[k].label)+'</option>'; }).join("");
+      return '<div class="ctl"><label for="b-scen">Moment</label><select id="b-scen">'+sc+'</select></div>' + ctlZip("b-zip", z) + ctlMode("b") + ctlLatency("b-lat", B.s.latency);
+    },
+    bind: function(){
+      $("b-scen").onchange = function(){ B.s.scen = this.value; showJson(); B.start(); };
+      $("b-zip").onchange = function(){ B.s.zip = this.value; showJson(); B.start(); };
+      bindMode(B); bindLatency("b-lat", B);
+    },
+    getMock: function(){ return B.mocks[B.s.zip][B.s.scen]; },
+    setMock: function(b){ B.mocks[B.s.zip][B.s.scen] = b; },
+    resetMocks: function(){ B.mocks = bDefaults(); },
+    validate: function(b){
+      if (!b || !b.availability || typeof b.availability.available !== "boolean") return ["availability.available must be true or false."];
+      if (!Array.isArray(b.availableDates)) return ["availableDates must be an array."];
+      if (!b.pricing || !/^\$\d+(\.\d\d)?$/.test(b.pricing.price || "")) return ["pricing.price must look like \"$149.00\"."];
+      return [];
+    },
+    mapping:[
+      ["Card shown or hidden","<code>check_preset_job_availability</code> (<code>available</code>, <code>eligibleProCount</code>) for the category and ZIP"],
+      ["Category and configuration","<code>list_preset_job_categories</code>: the only source of <code>categoryID</code> and <code>configurationID</code>, set per partner"],
+      ["Two questions","<code>get_preset_job_request_form</code> (<code>requestFormID</code>, <code>questions</code>)"],
+      ["Dates and arrival windows","<code>get_preset_job_available_times</code> (<code>availableDates[].slots</code>), 72 hours to 31 days out"],
+      ["Fixed price","<code>get_preset_job_pricing</code> (<code>price</code>, <code>searchID</code>)"],
+      ["Agree and book","<code>termsAccepted</code> on <code>create_preset_job_payment_terms</code> (Stripe shared payment token), then <code>create_preset_job</code>"],
+      ["Thumbtack sign-in sheet","Homeowner OAuth at <code>auth.thumbtack.com</code> the first time, so the booking sits on their Thumbtack account"],
+      ["Booked","<code>get_preset_job_order_status</code> (<code>status</code>, <code>appointmentStartsAt</code>)"]
+    ],
+    brief:[
+      ["OfferUp gets","A share of a paid job with a known value, from purchase and listing moments it doesn’t monetize today."],
+      ["Thumbtack gets","A paid order to one pro. No lead to refund, no overserving."],
+      ["Customer gets","A price and a time in under a minute, without waiting on quotes."],
+      ["Effort: medium","OfferUp’s first MCP integration: a booking flow and a payment token. Categories and timing depend on the toolset, which is in development."]
+    ],
+    sc: function(){ return B_SCEN[B.s.scen]; },
+    answersArr: function(){ var sc = B.sc(); return sc.qs.map(function(q){ return { questionID:q.id, answerIDs:[q.id + "_" + B.s.answers[q.id]] }; }); },
+    call: function(tool, args, tok){
+      var req = { jsonrpc:"2.0", id:Math.floor(Math.random()*1000), method:"tools/call", params:{ name:tool, arguments:args } };
+      var auth = tok ? 'Authorization: Bearer ' + esc(tok.slice(0,10)) + '…  (homeowner token, ' + esc(TT_AUTH.experience) + ')' : '(' + esc(TT_AUTH.appAuth.label) + ': offerup)';
+      setReq('<b>MCP</b> https://mcp.thumbtack.com  ' + auth + '\n// Preset Job toolset (in development)\n' + jsonBlock(req));
+      log("b","tools/call", tool);
+    },
+    start: function(){
+      if (closeSheet) closeSheet(true);
+      var run = ++B.s.run, sc = B.sc();
+      B.s.step = "checking"; B.s.answers = {}; B.s.slot = 0; B.s.price = null; B.s.token = null; B.s.note = ""; B.s.impr = false;
+      sc.qs.forEach(function(q){ B.s.answers[q.id] = q.def; });
+      log("b","moment","scenario="+B.s.scen+" zip="+B.s.zip);
+      B.call("check_preset_job_availability", { categoryID:sc.catID, zipCode:B.s.zip });
+      log("b","cached","list_preset_job_categories → "+sc.cat+" ("+sc.cfg+")");
+      B.render();
+      mockCall(B, B.getMock).then(function(res){
+        if (run !== B.s.run) return;
+        var errs = B.validate(res); if (errs.length) throw { status:"invalid", detail:errs[0] };
+        B.s.m = res;
+        log("b","tool_result","available="+res.availability.available+" eligibleProCount="+res.availability.eligibleProCount);
+        B.s.step = res.availability.available ? "trigger" : "none"; B.render();
+      }).catch(function(err){
+        if (run !== B.s.run) return;
+        log("b","tool_error",(err.status||"")+" "+(err.detail||"")+" · card hidden");
+        B.s.step = "none"; B.render();
+      });
+    },
+    trigger: function(){
+      var s = B.s, sc = B.sc(), h = "";
+      var card = function(){
+        if (s.step !== "trigger") return '<div class="state empty">No fixed-price '+esc(sc.cat.toLowerCase())+' near '+esc(s.zip)+' right now, so OfferUp shows no card.</div>';
+        if (!s.impr) { s.impr = true; log("b","card_impression","category="+sc.cat); }
+        return '<div class="ou-card tt">'+TT_BAR+'<h4>'+esc(sc.title)+'</h4><p>'+esc(sc.pitch)+' '+esc(s.m.availability.eligibleProCount)+' pros available near '+esc(s.zip)+'. See your price before you book.</p><button class="btn btn-tt" data-b="open">See price and times</button></div>';
+      };
+      if (s.step === "checking") card = function(){ return skel(1); };
+      if (B.s.scen === "tv") {
+        h += '<div class="thead">'+avatar("Marcus T")+'<div><b>Marcus</b><span>Samsung 65 in. 4K TV</span></div></div>';
+        h += '<div class="ou-card"><div class="ou-item"><div class="ou-thumb" style="background:#1F2222;color:#fff">TV</div><div><b>Samsung 65 in. 4K TV</b><span>Paid $350 · Picked up today</span></div></div></div>';
+        h += '<p class="ou-sys">You bought this item</p><div class="msgs"><div class="bub bot">Thanks! Enjoy the TV. The wall bracket isn’t included.</div><div class="bub me">Got it, thanks Marcus.</div></div><div style="height:12px"></div>';
+        h += card();
+      } else if (B.s.scen === "junk") {
+        h += '<p class="ou-h">Selling</p><div class="ou-card"><div class="ou-item"><div class="ou-thumb" style="background:#E9ECEC;color:#5C5C5C">SOFA</div><div><b>Gray sectional sofa</b><span>$250 · Listed 21 days ago · 0 offers</span></div></div></div>';
+        h += '<p class="q">Ideas to move it</p><div class="chips"><span class="opt">Lower the price</span><span class="opt">Promote listing</span></div>';
+        h += card();
+      } else {
+        h += '<div class="ou-search">'+SEARCH_ICON+'<span>'+esc(sc.query)+'</span></div><div class="ou-tabs"><span>For sale</span><span class="on">Services</span><span>Jobs</span><span>Rentals</span></div>';
+        h += card();
+        if (s.step === "trigger") h += '<p class="ou-h">More '+esc(sc.cat.toLowerCase())+' pros</p>' + skel(2);
+      }
+      return h;
+    },
+    form: function(){
+      var s = B.s, sc = B.sc(), dates = s.m.availableDates;
+      var h = TT_BAR + '<p class="ou-h" style="margin-top:4px">'+esc(sc.cat)+' · fixed price</p>';
+      sc.qs.forEach(function(q){
+        h += '<p class="q">'+esc(q.question)+'</p><div class="chips">' + q.options.map(function(o, i){
+          return '<button class="opt" data-bq="'+esc(q.id)+'" data-bv="'+i+'" aria-pressed="'+(s.answers[q.id]===i)+'"'+(s.step!=="form"?' disabled':'')+'>'+esc(o)+'</button>'; }).join("") + '</div>';
+      });
+      var slots = [];
+      dates.forEach(function(d){ d.slots.forEach(function(sl){ slots.push(sl); }); });
+      s.slots = slots;
+      h += '<p class="q">Arrival window</p><div class="chips">' + slots.slice(0,4).map(function(sl, i){
+        var a = new Date(sl.startTime), b = new Date(sl.endTime);
+        return '<button class="opt" data-bslot="'+i+'" aria-pressed="'+(s.slot===i)+'"'+(s.step!=="form"?' disabled':'')+'>'+esc(dayLabel(a))+', '+esc(hr(a))+'–'+esc(hr(b))+'</button>'; }).join("") + '</div>';
+      return h;
+    },
+    render: function(){
+      var s = B.s, sc = B.sc();
+      marketBar(s.zip); marketTabs(sc.tab);
+      var h = "";
+      if (s.step === "checking" || s.step === "trigger" || s.step === "none") { view.innerHTML = B.trigger(); scrollTop(); return; }
+      h += '<button class="linkbtn" data-b="back">‹ Back</button>';
+      h += B.form();
+      if (s.step === "times") h += skel(1);
+      if (s.step === "form") h += '<button class="btn btn-tt" data-b="price">See price</button>';
+      if (s.step === "pricing") h += skel(2);
+      if (s.price && (s.step === "price" || s.step === "booking" || s.step === "booked")) {
+        var sl = s.slots[s.slot], a = new Date(sl.startTime);
+        h += '<div class="ou-card" style="margin-top:10px"><p class="sub">Your fixed price</p><div class="bigprice">'+esc(s.price)+'</div>' +
+          '<div class="lines"><div><span>Includes</span><b style="max-width:62%;text-align:right">'+esc(sc.includes)+'</b></div><div><span>When</span><b>'+esc(dayLabel(a))+', '+esc(hr(a))+'</b></div><div><span>Pro</span><b>One Thumbtack pro, matched for you</b></div><div><span>Pay with</span><b>Card on OfferUp ••42</b></div></div>' +
+          '<p class="fine">By booking you agree to Thumbtack’s Terms of Use and Privacy Policy. Tax shown at checkout.</p></div>';
+      }
+      if (s.step === "price") h += '<button class="btn btn-tt" data-b="book">Agree and book · '+esc(s.price)+'</button>';
+      if (s.note) h += '<div class="state empty" style="margin-top:10px">'+esc(s.note)+'</div>';
+      if (s.token && (s.step === "booking" || s.step === "booked")) h += '<div class="state ok" style="margin-top:10px">'+esc(TT_AUTH.consent.connected)+'</div>';
+      if (s.step === "booking") h += typing();
+      if (s.step === "booked") {
+        var b = new Date(s.order.appointmentStartsAt);
+        h += '<div class="state ok" style="margin-top:10px"><b>Booked.</b> A Thumbtack pro is confirmed for '+esc(dayLabel(b))+' at '+esc(hr(b))+'. Order '+esc(s.order.orderID)+' · '+esc(s.order.status)+'. You’ll get reminders in OfferUp and from Thumbtack.</div>';
+      }
+      view.innerHTML = h;
+      if (s.step === "price" || s.step === "booking" || s.step === "booked") scrollEnd();
+    },
+    click: function(e){
+      var t = e.target.closest("[data-b]");
+      if (t) {
+        var a = t.dataset.b;
+        if (a === "open") return B.open();
+        if (a === "back") return B.start();
+        if (a === "price") return B.pricing();
+        if (a === "book") return B.book(t);
+      }
+      var q = e.target.closest("[data-bq]");
+      if (q && B.s.step === "form") { B.s.answers[q.dataset.bq] = Number(q.dataset.bv); log("b","answer",q.dataset.bq+"="+q.dataset.bv); B.render(); return; }
+      var sl = e.target.closest("[data-bslot]");
+      if (sl && B.s.step === "form") { B.s.slot = Number(sl.dataset.bslot); log("b","slot",B.s.slots[B.s.slot].startTime); B.render(); }
+    },
+    open: function(){
+      var run = B.s.run, sc = B.sc();
+      log("b","card_tap","category="+sc.cat);
+      B.s.step = "times"; B.render();
+      B.call("get_preset_job_request_form", { configurationID:sc.cfg });
+      setTimeout(function(){
+        if (run !== B.s.run) return;
+        log("b","tool_result","requestFormID=rf_"+sc.cfg+" questions="+sc.qs.length);
+        B.call("get_preset_job_available_times", { configurationID:sc.cfg, zipCode:B.s.zip });
+        mockCall(B, function(){ return B.s.m.availableDates; }).then(function(d){
+          if (run !== B.s.run) return;
+          log("b","tool_result",d.length+" dates with arrival windows");
+          B.s.step = d.length ? "form" : "none"; B.render();
+        }).catch(function(err){ if (run !== B.s.run) return; log("b","tool_error",(err.status||"")+" "+(err.detail||"")); B.s.step = "trigger"; B.render(); });
+      }, 350);
+    },
+    pricing: function(){
+      var run = B.s.run, sc = B.sc(), sl = B.s.slots[B.s.slot];
+      B.s.step = "pricing"; B.s.note = ""; B.render();
+      B.call("get_preset_job_pricing", { configurationID:sc.cfg, zipCode:B.s.zip, requestFormID:"rf_"+sc.cfg, requestFormAnswers:B.answersArr(), requestedTime:sl.startTime });
+      mockCall(B, function(){ return B.s.m.pricing; }).then(function(p){
+        if (run !== B.s.run) return;
+        var extra = sc.qs.reduce(function(n, q){ return n + (B.s.answers[q.id] - q.def); }, 0) * sc.step;
+        var base = Number(String(p.price).replace(/[^0-9.]/g,""));
+        B.s.price = "$" + Math.max(49, base + extra).toFixed(2); B.s.searchID = p.searchID;
+        log("b","tool_result","price="+B.s.price+" searchID="+p.searchID);
+        B.s.step = "price"; B.render();
+      }).catch(function(err){ if (run !== B.s.run) return; log("b","tool_error",(err.status||"")+" "+(err.detail||"")); B.s.step = "form"; B.s.note = "Thumbtack couldn’t price that just now. Tap See price to try again."; B.render(); });
+    },
+    book: function(btn){
+      var run = B.s.run;
+      log("b","terms_accepted","customer tapped Agree and book");
+      if (B.s.token) { B.place(); return; }
+      btn.disabled = true; btn.textContent = "Opening Thumbtack…";
+      ttAuthorize({ key:"b", clientId:"offerup" }).then(function(tok){
+        if (run !== B.s.run) return;
+        B.s.token = tok.access_token; B.place();
+      }).catch(function(){
+        if (run !== B.s.run) return;
+        B.s.note = "No problem. Nothing was booked or charged."; B.render();
+      });
+    },
+    place: function(){
+      var run = B.s.run, sc = B.sc(), sl = B.s.slots[B.s.slot], tok = B.s.token;
+      B.s.step = "booking"; B.s.note = ""; B.render();
+      var common = { configurationID:sc.cfg, user:{ firstName:"Jordan", lastName:"Lee", email:"jordan@example.com", phoneNumber:"+15555550142" },
+        address:{ address1:"1201 3rd Ave", city:ZIPS[B.s.zip].city, state:ZIPS[B.s.zip].st.toUpperCase(), zipCode:B.s.zip },
+        externalOrderID:"ou-" + Math.floor(Math.random()*9e6+1e6), productDetails: sc.product ? [sc.product] : [], searchID:B.s.searchID, termsAccepted:true };
+      B.call("create_preset_job_payment_terms", common, tok);
+      mockCall(B, function(){ var c = Math.round(Number(B.s.price.slice(1))*100); return { amountCents:c, currency:"usd", subtotalCents:c, salesTaxCents:0, sharedPaymentToken:"spt_" + Math.random().toString(36).slice(2,10) }; }).then(function(terms){
+        if (run !== B.s.run) return;
+        log("b","tool_result","payment terms amountCents="+terms.amountCents+" (no charge yet)");
+        var args = clone(common); args.sharedPaymentToken = terms.sharedPaymentToken; args.authorizedAmountCents = terms.amountCents;
+        B.call("create_preset_job", args, tok);
+        return mockCall(B, function(){ return { orderID:"ord_" + Math.floor(Math.random()*9e6+1e6), status:"schedulingReady", categoryID:sc.catID, externalOrderID:common.externalOrderID }; });
+      }).then(function(o){
+        if (!o || run !== B.s.run) return;
+        log("b","tool_result","orderID="+o.orderID+" status="+o.status+" "+UTM);
+        B.call("get_preset_job_order_status", { orderID:o.orderID }, tok);
+        return mockCall(B, function(){ return { orderID:o.orderID, status:"proMatchComplete", paymentStatus:"pending", categoryID:sc.catID, externalOrderID:o.externalOrderID, appointmentStartsAt:sl.startTime }; });
+      }).then(function(st){
+        if (!st || run !== B.s.run) return;
+        log("b","order_status","status="+st.status+" paymentStatus="+st.paymentStatus);
+        B.s.order = st; B.s.step = "booked"; B.render();
+      }).catch(function(err){
+        if (run !== B.s.run) return;
+        log("b","tool_error",(err.status||"")+" "+(err.detail||""));
+        B.s.step = "price"; B.s.note = "Thumbtack didn’t confirm the booking. Nothing was charged. Tap Agree and book to try again."; B.render();
+      });
+    }
+  };
+  function hr(d){ var h = d.getHours(), ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12; return h + " " + ap; }
+
+  /* =========================================================
+     OPTION C · pro messages in the inbox (Messages API, first partner test)
+     ========================================================= */
+  var C_PROS = {
+    "98101": [["Sparkle Home Cleaning",4.9,412,true],["Elliott Bay Maids",4.8,233,true],["Pike Place Cleaning Co.",4.7,88,false]],
+    "30307": [["Peachtree Maids",4.9,190,true],["Inman Park Cleaners",4.7,72,false]],
+    "59001": []
+  };
+  function cDefaults(){
+    var z = {};
+    Object.keys(C_PROS).forEach(function(k){
+      var list = C_PROS[k].map(function(p, i){ return { businessID:"4759999269218" + (500100 + i), negotiationID:"neg_" + k + "_" + (i+1), name:p[0], rating:p[1], reviews:p[2], top:p[3] }; });
+      z[k] = { contacted:list, messages: list.length ? { data:[{
+        messageID:"msg_" + k + "_1", negotiationID:list[0].negotiationID, from:"Business",
+        business:{ businessID:list[0].businessID, displayName:list[0].name },
+        text:"Hi Jordan, thanks for the request. I can do a standard clean for your 2 bed, 1 bath on Thursday morning or Friday afternoon. Which works?",
+        attachments:[], sentAt:new Date(Date.now() - 4*60000).toISOString() }], pagination:{ limit:20 } } : { data:[], pagination:{ limit:20 } } };
+    });
+    return z;
+  }
+  var C_REPLIES = {
+    thu: { say:"Thursday morning works!", pro:"Great, you’re booked for Thursday at 10 AM. I’ll message here if anything changes." },
+    inc: { say:"What’s included?", pro:"Kitchen, bathrooms, dusting, vacuuming and mopping, and trash out. Supplies included. Want Thursday at 10 AM?" }
+  };
+  var C = {
+    key:"c",
+    title:"Option C · Pro replies in the OfferUp inbox",
+    hint:"OfferUp sends the request as it does today. Each contacted pro comes back with a negotiationID, and Thumbtack pushes their messages to OfferUp as they arrive. The customer reads and replies in the inbox they already use for buying and selling. Not yet tested with a demand partner.",
+    jsonTitle:"Mock response · GET /api/v4/negotiations/{negotiationID}/messages",
+    s:{ zip:"98101", reply:"yes", mode:"ok", latency:600, step:"idle", run:0, thread:[], waiting:false, sent:{} },
+    mocks:cDefaults(),
+    controls: function(){
+      var z = Object.keys(ZIPS).map(function(k){ return '<option value="'+k+'"'+(k===C.s.zip?' selected':'')+'>'+esc(ZIPS[k].label)+'</option>'; }).join("");
+      return ctlZip("c-zip", z) +
+        '<div class="ctl"><span class="lbl" id="c-repLbl">Pro reply</span><div class="seg" role="group" aria-labelledby="c-repLbl" id="c-rep"><button data-r="yes" aria-pressed="'+(C.s.reply==="yes")+'">Replied</button><button data-r="no" aria-pressed="'+(C.s.reply==="no")+'">Not yet</button></div></div>' +
+        ctlMode("c") + ctlLatency("c-lat", C.s.latency);
+    },
+    bind: function(){
+      $("c-zip").onchange = function(){ C.s.zip = this.value; showJson(); C.start(); };
+      document.querySelectorAll("#c-rep button").forEach(function(b){ b.onclick = function(){
+        C.s.reply = b.dataset.r;
+        document.querySelectorAll("#c-rep button").forEach(function(x){ x.setAttribute("aria-pressed", String(x === b)); });
+        C.start();
+      }; });
+      bindMode(C); bindLatency("c-lat", C);
+    },
+    getMock: function(){ return C.mocks[C.s.zip].messages; },
+    setMock: function(b){ C.mocks[C.s.zip].messages = b; },
+    resetMocks: function(){ C.mocks = cDefaults(); },
+    validate: function(b){
+      if (!b || !Array.isArray(b.data)) return ["Top-level object needs a data array."];
+      for (var i = 0; i < b.data.length; i++) {
+        var m = b.data[i];
+        if (typeof m.text !== "string") return ["data["+i+"].text must be a string."];
+        if (typeof m.negotiationID !== "string") return ["data["+i+"].negotiationID must be a string."];
+      }
+      return [];
+    },
+    mapping:[
+      ["Request sent to three pros","<code>POST /api/v4/requests</code>, already live. <code>request.contactedBusinesses[].negotiationID</code> (added May 2026) keys each thread"],
+      ["Push and unread dot","<code>messageSentV4</code> webhook, subscribed with <code>createUserWebhookV4</code>"],
+      ["Thread messages","<code>GET /api/v4/negotiations/{negotiationID}/messages</code> · <code>text</code>, <code>sentAt</code>, <code>from</code> (pro sender fields illustrative)"],
+      ["Customer reply","<code>POST /api/v4/negotiations/{negotiationID}/messages</code> with <code>{ text }</code>, on the customer’s token"],
+      ["Thumbtack pro label, rating","Find Pros result OfferUp already has for that <code>businessID</code>"],
+      ["Buy and sell threads","OfferUp (partner side), unchanged"]
+    ],
+    brief:[
+      ["OfferUp gets","More requests read and answered, so fewer refunds, and customers who stay in the OfferUp inbox."],
+      ["Thumbtack gets","Faster customer replies and more hires from the same requests."],
+      ["Customer gets","One inbox. Pros sit next to the people they buy from, with the same push alerts."],
+      ["Effort: medium","A webhook receiver and a new thread type. Messages is documented but untested with a demand partner, so OfferUp would be the first."]
+    ],
+    start: function(){
+      if (closeSheet) closeSheet(true);
+      var run = ++C.s.run, mk = C.mocks[C.s.zip];
+      C.s.step = "loading"; C.s.thread = []; C.s.waiting = false; C.s.sent = {}; C.s.done = false;
+      log("c","request_sent_earlier","POST /api/v4/requests contacted="+mk.contacted.length);
+      setReq('<b>POST</b> /api/v4/requests  (sent earlier, already live)\n' + jsonBlock({ request:{ requestID:"req_83120457", category:{ name:"House Cleaning" }, contactedBusinesses:mk.contacted.map(function(p){ return { businessID:p.businessID, negotiationID:p.negotiationID }; }) } }) +
+        '\n\n<b>POST</b> createUserWebhookV4  (once per customer)\n' + jsonBlock({ eventType:"messageSentV4", url:"https://partner.example/thumbtack/webhooks" }));
+      C.render();
+      if (C.s.reply === "no" || !mk.contacted.length) {
+        setTimeout(function(){ if (run !== C.s.run) return; C.s.step = "inbox"; C.s.msgs = []; log("c","inbox_render","no pro messages yet"); C.render(); }, 500);
+        return;
+      }
+      setTimeout(function(){
+        if (run !== C.s.run) return;
+        log("c","webhook messageSentV4","negotiationID="+mk.contacted[0].negotiationID);
+        setReq('<b>WEBHOOK</b> messageSentV4 → OfferUp server\n' + jsonBlock({ negotiationID:mk.contacted[0].negotiationID }) + '\n\n<b>GET</b> /api/v4/negotiations/' + esc(mk.contacted[0].negotiationID) + '/messages');
+        mockCall(C, C.getMock).then(function(res){
+          if (run !== C.s.run) return;
+          var errs = C.validate(res); if (errs.length) throw { status:"invalid", detail:errs[0] };
+          C.s.msgs = res.data; C.s.step = "inbox";
+          log("c","response 200",res.data.length+" message(s) · push sent to the customer");
+          C.render();
+        }).catch(function(err){
+          if (run !== C.s.run) return;
+          log("c","response "+(err.status||"error"),(err.detail||"")+" · OfferUp retries; inbox shows the request only");
+          C.s.msgs = []; C.s.step = "inbox"; C.render();
+        });
+      }, 700);
+    },
+    pro: function(){ return C.mocks[C.s.zip].contacted[0]; },
+    render: function(){
+      var s = C.s, mk = C.mocks[s.zip];
+      marketBar(s.zip); marketTabs("Inbox");
+      var h = "";
+      if (s.step === "loading") { view.innerHTML = '<p class="ou-h">Inbox</p>' + skel(3); return; }
+      if (s.step === "inbox") {
+        var m = s.msgs && s.msgs[s.msgs.length - 1], p = C.pro();
+        if (m) h += '<div class="push">'+TT_BAR.replace('class="tt-bar"','class="tt-bar" style="margin:0"')+'<span><b>'+esc(p.name)+'</b> replied to your cleaning request</span></div>';
+        h += '<p class="ou-h">Inbox</p><div class="ib-chips"><span class="opt" aria-pressed="true">All</span><span class="opt">Buying</span><span class="opt">Selling</span><span class="opt">Services</span></div>';
+        if (m) h += '<button class="ib-row unread" data-cthread>'+avatar(p.name)+'<div class="p-body"><b>'+esc(p.name)+'<span class="ttpill">Thumbtack pro</span></b><span>'+esc(m.text)+'</span></div><time>4m</time><span class="udot" aria-label="Unread"></span></button>';
+        else if (mk.contacted.length) h += '<div class="ib-row"><div class="avatar" style="background:var(--tt-soft);color:var(--tt)">TT</div><div class="p-body"><b>House cleaning request</b><span>Sent to '+mk.contacted.length+' Thumbtack pros · replies land here</span></div><time>now</time></div>';
+        else h += '<div class="state empty">No Thumbtack pros near '+esc(s.zip)+', so no request went out.</div>';
+        h += '<button class="ib-row">'+avatar("Marcus T")+'<div class="p-body"><b>Marcus</b><span>You: Got it, thanks Marcus.</span></div><time>1h</time></button>';
+        h += '<button class="ib-row">'+avatar("Dana R")+'<div class="p-body"><b>Dana</b><span>Is the oak dining table still available?</span></div><time>3h</time></button>';
+        h += '<button class="ib-row">'+avatar("Priya K")+'<div class="p-body"><b>Priya</b><span>Offer: $40 for the bike rack</span></div><time>Yesterday</time></button>';
+        view.innerHTML = h; scrollTop(); return;
+      }
+      var pr = C.pro();
+      h += '<button class="linkbtn" data-cback>‹ Inbox</button>';
+      h += '<div class="thead">'+avatar(pr.name)+'<div><b>'+esc(pr.name)+'</b><span>Thumbtack pro · <span class="star">★</span> '+esc(pr.rating)+' ('+esc(pr.reviews)+')'+(pr.top?' · Top Pro':'')+'</span></div></div>';
+      h += '<div class="ctx"><b>Your request</b> · House cleaning · 2 bed, 1 bath · this week · sent through Thumbtack</div>';
+      h += '<div class="msgs">';
+      s.msgs.forEach(function(m){ h += '<div class="bub bot">'+esc(m.text)+'</div>'; });
+      s.thread.forEach(function(m){ h += '<div class="bub '+(m.me?'me':'bot')+'">'+esc(m.text)+'</div>'; });
+      if (s.waiting) h += typing();
+      if (!s.waiting && !s.done) {
+        var opts = Object.keys(C_REPLIES).filter(function(k){ return !s.sent[k]; });
+        if (opts.length) h += '<div class="replies">' + opts.map(function(k){ return '<button class="reply" data-creply="'+k+'">'+esc(C_REPLIES[k].say)+'</button>'; }).join("") + '</div>';
+      }
+      if (s.err) h += '<div class="state err">That didn’t send. Tap a reply to try again.</div>';
+      if (s.done) h += '<div class="state ok">Booked in the thread. Every message reached the pro in Thumbtack, and the customer never left OfferUp.</div>';
+      view.innerHTML = h + '</div>'; scrollEnd();
+    },
+    click: function(e){
+      if (e.target.closest("[data-cthread]")) { C.s.step = "thread"; log("c","thread_open","negotiationID="+C.pro().negotiationID); C.render(); return; }
+      if (e.target.closest("[data-cback]")) { C.s.step = "inbox"; C.render(); return; }
+      var r = e.target.closest("[data-creply]");
+      if (r && !C.s.waiting) C.reply(r.dataset.creply);
+    },
+    reply: function(k){
+      var run = C.s.run, rp = C_REPLIES[k], neg = C.pro().negotiationID;
+      C.s.err = false;
+      var last = C.s.thread[C.s.thread.length - 1]; if (!last || last.text !== rp.say) C.s.thread.push({ me:true, text:rp.say });
+      C.s.waiting = true; C.render();
+      setReq('<b>POST</b> /api/v4/negotiations/' + esc(neg) + '/messages\n' + jsonBlock({ text:rp.say }) + '\n// customer token, authorization: Bearer …');
+      log("c","request","POST messages negotiationID="+neg);
+      mockCall(C, function(){ return { ok:true }; }).then(function(){
+        if (run !== C.s.run) return;
+        C.s.sent[k] = true;
+        log("c","message_sent","delivered to the pro in Thumbtack");
+        setTimeout(function(){
+          if (run !== C.s.run) return;
+          C.s.waiting = false; C.s.thread.push({ me:false, text:rp.pro });
+          log("c","webhook messageSentV4","pro replied · negotiationID="+neg);
+          if (k === "thu") { C.s.done = true; log("c","hired","negotiationID="+neg+" "+UTM); }
+          C.render();
+        }, 1400);
+      }).catch(function(err){
+        if (run !== C.s.run) return;
+        log("c","response "+(err.status||"error"), err.detail||"");
+        C.s.waiting = false; C.s.err = true; C.render();
+      });
+    }
+  };
+
+  /* ------------ shared controls ------------ */
+  function ctlZip(id, opts){ return '<div class="ctl"><label for="'+id+'">zipCode</label><select id="'+id+'">'+opts+'</select></div>'; }
+  function ctlMode(k){ var o = OPTS[k]; return '<div class="ctl"><span class="lbl" id="'+k+'-modeLbl">Response</span><div class="seg" role="group" aria-labelledby="'+k+'-modeLbl" id="'+k+'-mode"><button data-mode="ok" aria-pressed="'+(o.s.mode==="ok")+'">200</button><button data-mode="error" aria-pressed="'+(o.s.mode==="error")+'">Error</button></div></div>'; }
+  function ctlLatency(id, v){ return '<div class="ctl"><label for="'+id+'">Latency (ms)</label><input type="number" id="'+id+'" value="'+v+'" min="0" max="5000" step="100" style="width:96px"></div>'; }
+  function bindMode(o){
+    document.querySelectorAll("#"+o.key+"-mode button").forEach(function(b){ b.onclick = function(){
+      o.s.mode = b.dataset.mode;
+      document.querySelectorAll("#"+o.key+"-mode button").forEach(function(x){ x.setAttribute("aria-pressed", String(x === b)); });
+      o.start();
+    }; });
+  }
+  function bindLatency(id, o){ $(id).onchange = function(){ var n = Math.max(0, Math.min(5000, Math.round(Number(this.value) || 0))); this.value = n; o.s.latency = n; }; }
+  function validatePros(body){
+    if (!body || !Array.isArray(body.data)) return ["Top-level object needs a data array."];
+    var errs = [];
+    body.data.forEach(function(p, i){
+      var x = "data[" + i + "]";
+      if (typeof p.businessID !== "string") errs.push(x + ".businessID must be a string");
+      if (typeof p.businessName !== "string") errs.push(x + ".businessName must be a string");
+      if (typeof p.rating !== "number") errs.push(x + ".rating must be a number");
+      if (typeof p.numberOfReviews !== "number") errs.push(x + ".numberOfReviews must be a number");
+      if (typeof p.startingPrice !== "number") errs.push(x + ".startingPrice must be a number");
+      if (!p.widgets || !/^https:\/\//.test(p.widgets.servicePageURL || "")) errs.push(x + ".widgets.servicePageURL must be an https URL");
+    });
+    return errs;
+  }
+
+  /* ------------ Thumbtack call-center channel (shared) ------------
+     build.py fills TT_CALL from platform/thumbtack-call-center.json (partner-safe fields; internal
+     builds add the internal overlay) and CALL_SCRIPTS from partners/<slug>/calls.json.
+     makeCallOption(k) returns an option with the same shape as A, B and C, shown when the
+     viewer picks Channel: Call on option k. Change the call flow or ToU steps in the JSON, not here.
+     Modes (calls.json "mode", default TT_CALL.defaultMode): ai = AI line only; human = human team only;
+     blended = human team, with the AI line offered when acceptCalls is false. */
+  var TT_CALL = {"defaultMode": "ai", "modes": {"ai": "Default. The partner transfers every call to its own Thumbtack AI number. Available any time, no lead webhook, credited by the number dialed.", "human": "The partner checks the queue, posts the lead webhook and transfers to Thumbtack's human team during staffed hours. When acceptCalls is false, the partner doesn't transfer.", "blended": "Human first, AI as backup: the human path during staffed hours, and when acceptCalls is false (after hours or a full queue) the partner offers Thumbtack's AI line instead. Proposed for Nearby AI; not yet confirmed."}, "hours": "8 AM to 8 PM ET", "termsUrl": "thumbtack.com/terms", "humanLine": "Thumbtack's human line (number in your partner sheet)", "humanDnis": "TT_HUMAN_LINE", "aiNumber": "your Thumbtack AI number (one per partner entity)", "availability": {"request": "GET Thumbtack queue availability", "rule": "acceptCalls is true when Thumbtack's team can take a call now, false otherwise, including outside staffed hours. On false, don't transfer."}, "webhook": {"request": "POST Thumbtack lead webhook", "result": "Thumbtack creates a Lead tagged with your attribution link, in about a second"}, "screenPop": "Thumbtack finds the Lead by the caller's phone number and opens it for the agent", "aiLookup": "Thumbtack looks up your AI number and tags the call with your utm_source", "unattributed": "unattributed", "consentCheck": "consent check", "createUser": "create or match the Thumbtack account", "intakeForm": "Thumbtack intake form", "consent": {"human": {"method": "Verbal Terms of Use acceptance, with the terms also texted, on a recorded call", "project": "Verbal OK to send the project to the pros the agent names", "account": "The agent enters name, phone and email in the Thumbtack intake form", "audit": "Call recording"}, "ai": {"method": "Verbal Terms of Use acceptance, or reply I AGREE to the text", "project": "The account is created or matched only after consent is confirmed, then the request is attached to that user", "account": "The account step runs only after the consent check returns confirmed", "audit": "Texted consent is logged. Verbal consent exists only in the call recording"}}, "rules": ["Human path: post the lead webhook first, then transfer. The agent can only see a Lead that already exists.", "call_from must equal the caller ID on the transfer, or the agent gets no screen pop.", "Send a new lead_id for every transfer, even for a repeat caller.", "Every webhook includes DNIS, the Thumbtack number the call goes to.", "Human calls go to the human line. AI calls go to the partner's own AI number. The AI line takes calls at any time and needs no webhook."]};
+  var CALL_SCRIPTS = {"a": {"mode": "blended", "title": "Option A by phone · call center hand-off", "hint": "The customer taps Call a pro advisor in OfferUp Services. During staffed hours OfferUp sends the lead and transfers to Thumbtack's team, who greet the caller by name. After hours or when the queue is full, OfferUp offers Thumbtack's AI line instead. The caller accepts Thumbtack's Terms of Use on the call before any account or request is created.", "hotline": "OfferUp · Call a pro", "assistant": "OfferUp", "partnerName": "OfferUp", "callerName": "Jordan Lee", "callerFirst": "Jordan", "email": "jordan@example.com", "callFrom": "5555550142", "otherCallerId": "5555550199", "leadPrefix": "offerup-", "zip": "98101", "category": "TV Mounting", "categoryNoun": "TV mounting pro", "greet": "Thanks for calling from OfferUp. I see you were looking at TV mounting near 98101.", "need": "Yes, I need a 65 inch TV mounted on drywall.", "needShort": "mounting a 65 inch TV on drywall", "needAgain": "I need a 65 inch TV mounted on drywall. I'm in 98101.", "gap": "OfferUp works with Thumbtack to book local pros by phone. Want me to connect you now?", "declineReply": "No problem. You can still request quotes from pros in the OfferUp app.", "transferLine": "Connecting you to Thumbtack's team now. I've passed along your ZIP and the job.", "transferLineAi": "Connecting you to Thumbtack's assistant now. It's available any time.", "agent": "Alex", "prosLine": "Two TV mounting pros near 98101 can come this week: {pros}. Okay to send your job to both?", "pros": [{"name": "Emerald City Mounting", "rating": 4.9}, {"name": "Puget Sound TV Install", "rating": 4.8}], "utmHuman": "cma-offerup-demo", "utmAi": "cma-offerup-demo", "briefPartner": "Higher-value requests from Services visits, and a phone option it doesn't have to staff."}};
+  (function(){
+    var st = document.createElement("style");
+    st.textContent =
+      ".vc-sys{align-self:center;font-size:11.5px;color:var(--ink-3);background:var(--soft);border-radius:999px;padding:3px 10px;text-align:center;max-width:92%}" +
+      ".who.vc-tt{color:var(--tt)}" +
+      ".bub.bot.vc-ttb{background:var(--tt-soft)}" +
+      ".vc-sms{align-self:stretch;border:1px solid var(--line);border-radius:14px;padding:9px 12px;font-size:13px;background:var(--phone)}" +
+      ".vc-sms b{display:block;font-size:11px;color:var(--ink-3);margin-bottom:2px;font-weight:700}" +
+      ".vc-smsme{align-self:flex-end;font-size:13px;font-weight:600;border:1px solid var(--line);border-radius:14px;padding:6px 12px;background:var(--phone)}" +
+      ".vc-smsme small{display:block;font-size:10.5px;color:var(--ink-3);font-weight:500}" +
+      ".screen[data-app=call] .tabbar span:last-child{color:var(--err-ink);font-weight:700}";
+    document.head.appendChild(st);
+  })();
+
+  function makeCallOption(k){
+    var sc = CALL_SCRIPTS[k], c = TT_CALL, STOP = {};
+    var mode = ({ ai:1, human:1, blended:1 })[sc.mode] ? sc.mode : (c.defaultMode || "ai");
+    var O = {
+      key: k + "-call", app: "call", title: sc.title, hint: sc.hint,
+      s: { path: mode === "ai" ? "ai" : "human", queue:"open", callerId:"match", mode:"ok", latency:700, run:0, lines:[], choices:null, answer:null, pending:false, ended:false, t0:0, pop:true, utm:"" },
+      timer: null
+    };
+    O.resetMocks = function(){ O.mocks = { human:{ acceptCalls: O.s.queue === "open" }, ai:{ utmsource: sc.utmAi } }; };
+    O.resetMocks();
+    O.getMock = function(){ return O.mocks[O.s.path]; };
+    O.setMock = function(b){ O.mocks[O.s.path] = b; if (O.s.path === "human") O.s.queue = b.acceptCalls ? "open" : "closed"; };
+    O.validate = function(b){
+      if (!b || typeof b !== "object") return ["Needs a JSON object."];
+      if (O.s.path === "human" && typeof b.acceptCalls !== "boolean") return ["acceptCalls must be true or false."];
+      if (O.s.path === "ai" && typeof b.utmsource !== "string") return ["utmsource must be a string (empty means " + c.unattributed + ")."];
+      return [];
+    };
+    O.refresh = function(){
+      var h = O.s.path === "human", x = h ? c.consent.human : c.consent.ai;
+      O.jsonTitle = h ? "Mock response · queue availability" : "Mock response · AI number lookup";
+      var rows = h ? [
+        ["Offer to connect", sc.partnerName + " (partner side), at the same coverage-gap moment as the app"],
+        ["Transfer only when Thumbtack can answer", c.availability.request + ". " + c.availability.rule],
+        ["After hours or a full queue", mode === "blended" ? "The partner offers Thumbtack's AI line instead (proposed)" : "No transfer. The partner keeps the caller"],
+        ["Agent greets the caller by name", c.webhook.request + " before the transfer. " + c.screenPop],
+        ["Terms of Use on the call", x.method + ". Audit: " + x.audit],
+        ["Account", x.account],
+        ["Request to named pros", x.project + ". Credited through the partner's attribution link"]
+      ] : [
+        ["Transfer to Thumbtack's AI line", c.aiNumber + ". " + c.aiLookup],
+        ["Caller restates the job", "No Lead travels on this path, so the AI asks again"],
+        ["Terms of Use on the call", x.method + " (" + c.consentCheck + ")"],
+        ["Account", x.account + " (" + c.createUser + ")"],
+        ["Request to named pros", x.project],
+        ["Audit", x.audit]
+      ];
+      O.mapping = rows.map(function(r){ return [esc(r[0]), esc(r[1])]; });
+      O.brief = h ? [
+        [sc.partnerName + " gets", sc.briefPartner],
+        ["Thumbtack gets", "A warm transfer with the caller's ZIP, category and number already in a Lead."],
+        ["Effort: low", "One webhook and a call transfer. The availability check is optional." + (mode === "blended" ? " Blended adds the partner's own Thumbtack AI number as the backup." : "")],
+        ["Partner rules", c.rules.slice(0, 4).join(" ")]
+      ] : [
+        [sc.partnerName + " gets", "A hand-off at any hour, with no webhook to build."],
+        ["Thumbtack gets", "Calls credited by the number dialed."],
+        ["Effort: lowest", "Transfer to the partner's own Thumbtack AI number."],
+        ["Watch for", "No Lead travels with the call, so the caller repeats the job. A number Thumbtack doesn't know is " + c.unattributed + "."]
+      ];
+    };
+    O.refresh();
+
+    function seg(id, lbl, val, opts){
+      return '<div class="ctl"><span class="lbl" id="'+id+'Lbl">'+esc(lbl)+'</span><div class="seg" role="group" aria-labelledby="'+id+'Lbl" id="'+id+'">' +
+        opts.map(function(o){ return '<button data-v="'+o[0]+'" aria-pressed="'+(val===o[0])+'">'+esc(o[1])+'</button>'; }).join("") + '</div></div>';
+    }
+    function bindSeg(id, fn){
+      document.querySelectorAll("#"+id+" button").forEach(function(b){ b.onclick = function(){
+        document.querySelectorAll("#"+id+" button").forEach(function(x){ x.setAttribute("aria-pressed", String(x === b)); });
+        fn(b.dataset.v);
+      }; });
+    }
+    O.controls = function(){
+      var h = mode === "blended" ? seg(k+"-vpath", "Thumbtack line", O.s.path, [["human","Human team"],["ai","AI assistant"]]) :
+        '<div class="ctl"><span class="lbl">Thumbtack line</span><span class="chip">'+(mode === "ai" ? "AI assistant (default)" : "Human team")+'</span></div>';
+      if (O.s.path === "human") h += seg(k+"-vq", "Queue", O.s.queue, [["open","Accepting calls"],["closed","Closed or full"]]) +
+        seg(k+"-vcid", "Caller ID", O.s.callerId, [["match","Matches call_from"],["other","Different"]]);
+      return h + ctlLatency(k+"-vlat", O.s.latency);
+    };
+    O.bind = function(){
+      if (mode === "blended") bindSeg(k+"-vpath", function(v){ O.s.path = v; O.refresh(); select(k); });
+      if (O.s.path === "human") {
+        bindSeg(k+"-vq", function(v){ O.s.queue = v; O.mocks.human.acceptCalls = v === "open"; showJson(); O.start(); });
+        bindSeg(k+"-vcid", function(v){ O.s.callerId = v; O.start(); });
+      }
+      bindLatency(k+"-vlat", O);
+    };
+
+    function mine(){ return OPTS[cur] === O; }
+    function clock(){ var s = Math.max(0, Math.round((Date.now() - O.s.t0) / 1000)); return Math.floor(s/60) + ":" + ("0" + (s%60)).slice(-2); }
+    function drawBar(){
+      if (!mine()) return;
+      $("appbar").innerHTML = '<span class="logo porch">'+esc(sc.hotline)+'</span><span class="spacer"></span><span class="chip">'+(O.s.ended?'Ended ':'')+esc(clock())+'</span><button class="restart" data-restart>Restart</button>';
+    }
+    O.render = function(){
+      if (!mine()) return;
+      drawBar();
+      $("tabbar").innerHTML = '<span>Mute</span><span>Keypad</span><span>Speaker</span><span>End</span>';
+      var h = '<div class="msgs">';
+      O.s.lines.forEach(function(l){
+        if (l.kind === "sys") h += '<div class="vc-sys">'+esc(l.text)+'</div>';
+        else if (l.kind === "sms") h += '<div class="vc-sms"><b>Text from Thumbtack</b>'+esc(l.text)+'</div>';
+        else if (l.kind === "smsme") h += '<div class="vc-smsme"><small>Text reply</small>'+esc(l.text)+'</div>';
+        else if (l.kind === "ok" || l.kind === "err") h += '<div class="state '+l.kind+'">'+esc(l.text)+'</div>';
+        else if (l.who === "caller") h += '<div class="bub me">'+esc(l.text)+'</div>';
+        else if (l.who === "partner") h += '<p class="who">'+esc(sc.assistant)+'</p><div class="bub bot">'+esc(l.text)+'</div>';
+        else h += '<p class="who vc-tt">'+(l.who === "agent" ? 'Thumbtack · '+esc(sc.agent) : 'Thumbtack assistant')+'</p><div class="bub bot vc-ttb">'+esc(l.text)+'</div>';
+      });
+      if (O.s.pending) h += typing();
+      if (O.s.choices) h += '<div class="replies">' + O.s.choices.map(function(ch){ return '<button class="reply" data-vc="'+ch.id+'">'+esc(ch.label)+'</button>'; }).join("") + '</div>';
+      view.innerHTML = h + '</div>'; scrollEnd();
+    };
+    O.click = function(e){
+      var b = e.target.closest("[data-vc]"); if (!b || !O.s.answer) return;
+      var ch = (O.s.choices || []).filter(function(x){ return x.id === b.dataset.vc; })[0]; if (!ch) return;
+      log(O.key, "caller_choice", ch.id);
+      if (ch.say) O.s.lines.push({ who:"caller", text:ch.say });
+      if (ch.sms) O.s.lines.push({ kind:"smsme", text:ch.sms });
+      var fn = O.s.answer; O.s.choices = null; O.s.answer = null; fn(ch.id);
+    };
+
+    function chk(run){ if (run !== O.s.run) throw STOP; }
+    function wait(ms, run){ return new Promise(function(r){ setTimeout(r, ms); }).then(function(){ chk(run); }); }
+    function push(l){ O.s.lines.push(l); O.render(); }
+    async function say(run, who, text, ms){
+      if (who !== "caller") { O.s.pending = true; O.render(); }
+      await wait(ms == null ? (who === "caller" ? 700 : 1000) : ms, run);
+      O.s.pending = false; push({ who:who, text:text });
+    }
+    function ask(run, choices){
+      return new Promise(function(res){ O.s.choices = choices; O.s.answer = res; O.render(); }).then(function(v){ chk(run); return v; });
+    }
+    function fetchMock(run, which){ return mockCall(O, function(){ return O.mocks[which]; }).then(function(r){ chk(run); return r; }); }
+    function req(head, body, notes){
+      setReq(head + (body ? '\n' + jsonBlock(body) : '') + (notes || []).filter(Boolean).map(function(n){ return '\n// ' + esc(n); }).join(""));
+    }
+    async function end(run, kind, text){
+      await wait(300, run);
+      O.s.ended = true; push({ kind:kind, text:text }); push({ kind:"sys", text:"Call ended · " + clock() });
+      log(O.key, "call_end", text);
+    }
+
+    async function pros(run, who, path){
+      var names = sc.pros.map(function(p){ return p.name + " (" + p.rating + " stars)"; }).join(" and ");
+      await say(run, who, sc.prosLine.replace("{pros}", names));
+      var pick = await ask(run, [{ id:"both", label:"Yes, send to both", say:"Yes, send it to both." }, { id:"first", label:"Just the first one", say:"Just the first one." }]);
+      var chosen = pick === "both" ? sc.pros : sc.pros.slice(0, 1);
+      var utm = path === "human" ? (O.s.pop ? sc.utmHuman : "(partner link not shown to the agent)") : (O.s.utm || c.unattributed);
+      req('<b>REQUEST</b> sent to the named pros', { pros:chosen.map(function(p){ return p.name; }), zipCode:sc.zip, category:sc.category, details:sc.needShort, utm_source:utm }, [c.consent[path].project]);
+      log(O.key, "request_sent", chosen.length + " pro(s), utm_source=" + utm);
+      await say(run, who, "Done. " + (chosen.length > 1 ? "Both pros" : chosen[0].name) + " will text you shortly, and Thumbtack will send a confirmation.");
+      var credited = path === "human" ? (O.s.pop ? "credited to " + sc.partnerName : "credit at risk: no screen pop") : (O.s.utm ? "credited to " + sc.partnerName : c.unattributed);
+      await end(run, "ok", "Request sent to " + chosen.length + " pro" + (chosen.length > 1 ? "s" : "") + " · " + credited);
+    }
+
+    async function human(run){
+      req('<b>GET</b> ' + esc(c.availability.request), null, [c.availability.rule]);
+      log(O.key, "availability_check", "");
+      var r;
+      try { r = await fetchMock(run, "human"); } catch (e) { if (e === STOP) throw e; r = { acceptCalls:false }; log(O.key, "availability_error", (e.status || "") + " " + (e.detail || "")); }
+      log(O.key, "availability", "acceptCalls=" + r.acceptCalls);
+      if (!r.acceptCalls && mode !== "blended") {
+        await say(run, "partner", "Thumbtack's team can't take a call right now. They answer " + c.hours + ". Want me to have them call you back?");
+        await ask(run, [{ id:"later", label:"I'll call back", say:"I'll call back later." }]);
+        await say(run, "partner", "Okay. Thumbtack's team is in " + c.hours + ".");
+        return end(run, "ok", "Call ended. No transfer: acceptCalls was false.");
+      }
+      if (!r.acceptCalls) {
+        await say(run, "partner", "Thumbtack's team can't take a call right now. They answer " + c.hours + ". Thumbtack's AI assistant can help any time. Want that instead?");
+        var alt = await ask(run, [{ id:"ai", label:"Yes, the AI assistant", say:"Sure, the AI assistant." }, { id:"later", label:"I'll call back", say:"I'll call back later." }]);
+        if (alt === "ai") { push({ kind:"sys", text:"No transfer to the human line (acceptCalls was false)" }); return ai(run, true); }
+        await say(run, "partner", "Okay. Thumbtack's team is in " + c.hours + ".");
+        return end(run, "ok", "Call ended. No transfer: acceptCalls was false.");
+      }
+      var leadId = sc.leadPrefix + Math.floor(Math.random() * 9e6 + 1e6);
+      req('<b>POST</b> ' + esc(c.webhook.request), { call_from:sc.callFrom, lead_id:leadId, zipcode:sc.zip, category:sc.category, DNIS:c.humanDnis }, [c.webhook.result, "Sent before the transfer. One lead_id per transfer."]);
+      log(O.key, "lead_webhook", "lead_id=" + leadId + " DNIS=" + c.humanDnis);
+      await say(run, "partner", sc.transferLine);
+      push({ kind:"sys", text:"Transferring to Thumbtack" });
+      var cid = O.s.callerId === "match" ? sc.callFrom : sc.otherCallerId;
+      await wait(500, run);
+      req('<b>TRANSFER</b> ' + esc(c.humanLine) + '\nCaller ID: ' + esc(cid) + '   call_from: ' + esc(sc.callFrom), null, [c.screenPop]);
+      log(O.key, "transfer", "caller_id=" + cid);
+      await wait(1200, run);
+      O.s.pop = cid === sc.callFrom;
+      log(O.key, O.s.pop ? "screen_pop" : "no_screen_pop", O.s.pop ? "Lead " + leadId + " opened with the partner link" : "caller ID didn't match call_from");
+      if (O.s.pop) await say(run, "agent", "Hi " + sc.callerFirst + ", this is " + sc.agent + " at Thumbtack. I see " + sc.assistant + " sent you over about " + sc.needShort + " in " + sc.zip + ".");
+      else {
+        push({ kind:"sys", text:"No screen pop: the caller ID didn't match call_from" });
+        await say(run, "agent", "Thanks for calling Thumbtack, this is " + sc.agent + ". How can I help?");
+        await say(run, "caller", sc.needAgain);
+      }
+      await say(run, "agent", "Before I send this to pros, do you agree to Thumbtack's Terms of Use? I'm texting you a copy now, and this call is recorded.");
+      push({ kind:"sms", text:"Here are Thumbtack's Terms of Use: " + c.termsUrl });
+      log(O.key, "terms_texted", c.termsUrl);
+      var a = await ask(run, [{ id:"agree", label:"Yes, I agree", say:"Yes, I agree." }, { id:"decline", label:"I don't agree", say:"No, I don't agree." }]);
+      if (a === "decline") {
+        log(O.key, "tou_declined", "no account, nothing sent");
+        await say(run, "agent", "No problem. I won't create an account or send anything.");
+        return end(run, "ok", "Call ended. No account, nothing sent.");
+      }
+      req('<b>CONSENT</b> Terms of Use accepted', { method:"verbal", termsTexted:true, recorded:true }, [c.consent.human.method, "Audit: " + c.consent.human.audit, c.consentNote]);
+      log(O.key, "tou_accepted", "verbal, terms texted, call recorded");
+      await say(run, "agent", "Thanks. Can I get your name and email? I have this number for your phone.");
+      await say(run, "caller", sc.callerName + ", " + sc.email + ".");
+      req('<b>' + esc(c.intakeForm) + '</b>', { name:sc.callerName, phone:sc.callFrom, email:sc.email }, [c.consent.human.account]);
+      log(O.key, "account_created", c.intakeForm);
+      return pros(run, "agent", "human");
+    }
+
+    async function ai(run, fallback){
+      await say(run, "partner", fallback ? "Connecting you to Thumbtack's assistant now." : sc.transferLineAi);
+      push({ kind:"sys", text:"Transferring to Thumbtack's AI line" });
+      req('<b>TRANSFER</b> ' + esc(c.aiNumber), null, [c.aiLookup, "No lead webhook. Takes calls at any time."]);
+      log(O.key, "transfer", "to AI number");
+      var r;
+      try { r = await fetchMock(run, "ai"); } catch (e) { if (e === STOP) throw e; r = { utmsource:"" }; log(O.key, "lookup_error", (e.status || "") + " " + (e.detail || "")); }
+      O.s.utm = r.utmsource || "";
+      log(O.key, "partner_tagged", "utm_source=" + (O.s.utm || c.unattributed));
+      await say(run, "ai", "Hi, I'm Thumbtack's assistant. What can I help you with today?");
+      await say(run, "caller", sc.needAgain);
+      await say(run, "ai", "I can find a " + sc.categoryNoun + " near " + sc.zip + ". First, do you agree to Thumbtack's Terms of Use? You can say yes, or reply I AGREE to the text I just sent.");
+      push({ kind:"sms", text:"To continue, review Thumbtack's Terms of Use at " + c.termsUrl + " and reply I AGREE." });
+      log(O.key, "terms_texted", c.termsUrl);
+      var a = await ask(run, [{ id:"verbal", label:"Say yes", say:"Yes, I agree." }, { id:"sms", label:"Reply I AGREE by text", sms:"I AGREE" }, { id:"decline", label:"I don't agree", say:"No, I don't agree." }]);
+      if (a === "decline") {
+        log(O.key, "tou_declined", "no account, nothing sent");
+        await say(run, "ai", "Okay. I won't create an account or send anything.");
+        return end(run, "ok", "Call ended. No account, nothing sent.");
+      }
+      req('<b>' + esc(c.consentCheck) + '</b>', { method:a === "sms" ? "sms_i_agree" : "verbal", status:"confirmed" }, [c.consent.ai.method, "Audit: " + c.consent.ai.audit]);
+      log(O.key, "consent_confirmed", a === "sms" ? "SMS I AGREE (logged)" : "verbal (in the recording)");
+      await wait(600, run);
+      req('<b>' + esc(c.createUser) + '</b>', { phone:sc.callFrom, zipCode:sc.zip, consent:"confirmed" }, [c.consent.ai.account]);
+      log(O.key, "account_created_or_matched", "after consent confirmed");
+      await say(run, "ai", "Thanks, you're all set.");
+      return pros(run, "ai", "ai");
+    }
+
+    O.start = function(){
+      if (closeSheet) closeSheet(true);
+      O.s.run++; O.s.lines = []; O.s.choices = null; O.s.answer = null; O.s.pending = false; O.s.ended = false; O.s.t0 = Date.now(); O.s.pop = true; O.s.utm = "";
+      clearInterval(O.timer); O.timer = setInterval(function(){ if (!O.s.ended) drawBar(); }, 1000);
+      setReq("Waiting for the caller.");
+      log(O.key, "call_start", "mode=" + mode + " line=" + O.s.path + (O.s.path === "human" ? " queue=" + O.s.queue + " caller_id=" + O.s.callerId : ""));
+      var run = O.s.run;
+      (async function(){
+        push({ kind:"sys", text:"Incoming call to " + sc.hotline });
+        await say(run, "partner", sc.greet);
+        await say(run, "caller", sc.need);
+        await say(run, "partner", sc.gap);
+        var go = await ask(run, [{ id:"connect", label:"Yes, connect me", say:"Yes, connect me." }, { id:"no", label:"No thanks", say:"No thanks." }]);
+        if (go === "no") { await say(run, "partner", sc.declineReply); return end(run, "ok", "Call ended. Nothing sent to Thumbtack."); }
+        return O.s.path === "human" ? human(run) : ai(run, false);
+      })().catch(function(e){ if (e !== STOP) log(O.key, "error", String(e && e.message || e)); });
+    };
+    return O;
+  }
+
+  var BASE = { a:A, b:B, c:C };
+  var OPTS = { a:A, b:B, c:C };
+  /* Options with a calls.json script get a Channel switch: App (the option above) or Call. */
+  var CALLS = {}, chan = {};
+  Object.keys(CALL_SCRIPTS).forEach(function(k){ if (BASE[k]) CALLS[k] = makeCallOption(k); });
+  function chanCtl(k){
+    if (!CALLS[k]) return "";
+    var v = chan[k] || "app";
+    return '<div class="ctl"><span class="lbl" id="chanLbl">Channel</span><div class="seg" role="group" aria-labelledby="chanLbl" id="chan"><button data-ch="app" aria-pressed="'+(v==="app")+'">App</button><button data-ch="call" aria-pressed="'+(v==="call")+'">Call</button></div></div>';
+  }
+  function bindChan(k){ document.querySelectorAll("#chan button").forEach(function(b){ b.onclick = function(){ chan[k] = b.dataset.ch; select(k); }; }); }
+
+  function showJson(){ $("json").value = JSON.stringify(OPTS[cur].getMock(), null, 2); $("jsonMsg").textContent = ""; }
+
+  function select(k, fromHash){
+    if (!OPTS[k]) k = "a";
+    cur = k; OPTS[k] = (chan[k] === "call" && CALLS[k]) ? CALLS[k] : BASE[k]; var o = OPTS[k];
+    screen.dataset.app = o.app || "market";
+    document.querySelectorAll(".switch button").forEach(function(b){ b.setAttribute("aria-selected", String(b.dataset.opt === k)); });
+    $("stage").setAttribute("aria-labelledby", "tab-" + k);
+    document.querySelectorAll("section.compare th[data-col]").forEach(function(th){ th.classList.toggle("on", th.dataset.col === k); });
+    $("pTitle").textContent = o.title; $("pHint").textContent = o.hint; $("jsonTitle").textContent = o.jsonTitle;
+    $("controls").innerHTML = chanCtl(k) + o.controls(); bindChan(k); o.bind();
+    $("mapping").innerHTML = o.mapping.map(function(r){ return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>'; }).join("");
+    $("brief").innerHTML = o.brief.map(function(r){ return '<div><b>'+esc(r[0])+'</b><p>'+esc(r[1])+'</p></div>'; }).join("");
+    showJson(); drawLog();
+    if (!fromHash) { try { history.replaceState(null, "", "#option-" + k + (o !== BASE[k] ? "-call" : "")); } catch (e) {} }
+    o.start();
+  }
+
+  document.querySelectorAll(".switch button").forEach(function(b){ b.addEventListener("click", function(){ select(b.dataset.opt); }); });
+  $("appbar").addEventListener("click", function(e){ if (e.target.closest("[data-restart]")) OPTS[cur].start(); });
+  view.addEventListener("click", function(e){ OPTS[cur].click(e); });
+
+  $("applyBtn").addEventListener("click", function(){
+    var msg = $("jsonMsg"), body, o = OPTS[cur];
+    try { body = JSON.parse($("json").value); } catch (err) { msg.className = "msg bad"; msg.textContent = "That isn't valid JSON: " + err.message; return; }
+    var errs = o.validate(body);
+    if (errs.length) { msg.className = "msg bad"; msg.textContent = errs[0] + (errs.length > 1 ? " (+" + (errs.length-1) + " more)" : ""); return; }
+    o.setMock(body); msg.className = "msg ok"; msg.textContent = "Applied"; o.start();
+  });
+  $("resetBtn").addEventListener("click", function(){ var o = OPTS[cur]; o.resetMocks(); showJson(); $("jsonMsg").className = "msg ok"; $("jsonMsg").textContent = "Mock reset"; o.start(); });
+  $("json").addEventListener("input", function(){ $("jsonMsg").textContent = ""; });
+
+  function fromHash(){
+    var m = /^#option-([abc])(-call)?$/.exec(location.hash);
+    if (!m) return "a";
+    chan[m[1]] = m[2] && CALLS[m[1]] ? "call" : "app";
+    return m[1];
+  }
+  window.addEventListener("hashchange", function(){ select(fromHash(), true); });
+  select(fromHash(), true);
+})();
+</script>
