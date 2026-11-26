@@ -690,7 +690,7 @@ section.compare th.on{color:var(--ink)}
   var B = {
     key:"b",
     title:"Option B · Preset Jobs, booked in OfferUp",
-    hint:"A fixed-price card appears at the moment it fits: after a TV purchase, on a listing that won’t sell, or in Services. The customer answers two questions, picks a time, sees the price and books. One Thumbtack pro is matched and the job is paid. The Preset Job toolset is in development.",
+    hint:"A fixed-price card appears at the moment it fits: after a TV purchase, on a listing that won’t sell, or in Services. The customer answers two questions, picks a time, sees the price and books. One Thumbtack pro is matched and the job is paid. All four categories here are live as fixed-price jobs on Thumbtack today; the MCP Preset Job toolset that partners book through is in development.",
     jsonTitle:"Mock MCP results · availability, times, pricing",
     s:{ zip:"98101", scen:"tv", mode:"ok", latency:600, step:"idle", answers:{}, slot:0, price:null, run:0, token:null, note:"" },
     mocks:bDefaults(),
@@ -715,10 +715,10 @@ section.compare th.on{color:var(--ink)}
     },
     mapping:[
       ["Card shown or hidden","<code>check_preset_job_availability</code> (<code>available</code>, <code>eligibleProCount</code>) for the category and ZIP"],
-      ["Category and configuration","<code>list_preset_job_categories</code>: the only source of <code>categoryID</code> and <code>configurationID</code>, set per partner"],
+      ["Category and configuration","<code>list_preset_job_categories</code>: the only source of <code>categoryID</code> and <code>configurationID</code>, set per partner. TV mounting, house cleaning, junk removal and handyman are live fixed-price categories today"],
       ["Two questions","<code>get_preset_job_request_form</code> (<code>requestFormID</code>, <code>questions</code>)"],
       ["Dates and arrival windows","<code>get_preset_job_available_times</code> (<code>availableDates[].slots</code>), 72 hours to 31 days out"],
-      ["Fixed price","<code>get_preset_job_pricing</code> (<code>price</code>, <code>searchID</code>)"],
+      ["Fixed price","<code>get_preset_job_pricing</code> (<code>price</code>, <code>searchID</code>). Prices in this mock are illustrative"],
       ["Agree and book","<code>termsAccepted</code> on <code>create_preset_job_payment_terms</code> (Stripe shared payment token), then <code>create_preset_job</code>"],
       ["Thumbtack sign-in sheet","Homeowner OAuth at <code>auth.thumbtack.com</code> the first time, so the booking sits on their Thumbtack account"],
       ["Booked","<code>get_preset_job_order_status</code> (<code>status</code>, <code>appointmentStartsAt</code>)"]
@@ -924,8 +924,8 @@ section.compare th.on{color:var(--ink)}
     Object.keys(C_PROS).forEach(function(k){
       var list = C_PROS[k].map(function(p, i){ return { businessID:"4759999269218" + (500100 + i), negotiationID:"neg_" + k + "_" + (i+1), name:p[0], rating:p[1], reviews:p[2], top:p[3] }; });
       z[k] = { contacted:list, messages: list.length ? { data:[{
-        messageID:"msg_" + k + "_1", negotiationID:list[0].negotiationID, from:"Business",
-        business:{ businessID:list[0].businessID, displayName:list[0].name },
+        messageID:"msg_" + k + "_1", negotiationID:list[0].negotiationID,
+        customer:{ customerID:"cus_" + k + "_jordan", displayName:"Jordan L." }, from:"Business",
         text:"Hi Jordan, thanks for the request. I can do a standard clean for your 2 bed, 1 bath on Thursday morning or Friday afternoon. Which works?",
         attachments:[], sentAt:new Date(Date.now() - 4*60000).toISOString() }], pagination:{ limit:20 } } : { data:[], pagination:{ limit:20 } } };
     });
@@ -938,7 +938,7 @@ section.compare th.on{color:var(--ink)}
   var C = {
     key:"c",
     title:"Option C · Pro replies in the OfferUp inbox",
-    hint:"OfferUp sends the request as it does today. Each contacted pro comes back with a negotiationID, and Thumbtack pushes their messages to OfferUp as they arrive. The customer reads and replies in the inbox they already use for buying and selling. Not yet tested with a demand partner.",
+    hint:"OfferUp sends the request as it does today. Each contacted pro comes back with a negotiationID, the same key the Pro integrations Messages API uses, and Thumbtack pushes their messages to OfferUp as they arrive. The customer reads and replies in the inbox they already use for buying and selling. Not yet tested with a demand partner.",
     jsonTitle:"Mock response · GET /api/v4/negotiations/{negotiationID}/messages",
     s:{ zip:"98101", reply:"yes", mode:"ok", latency:600, step:"idle", run:0, thread:[], waiting:false, sent:{} },
     mocks:cDefaults(),
@@ -971,9 +971,9 @@ section.compare th.on{color:var(--ink)}
     },
     mapping:[
       ["Request sent to three pros","<code>POST /api/v4/requests</code>, already live. <code>request.contactedBusinesses[].negotiationID</code> (added May 2026) keys each thread"],
-      ["Push and unread dot","<code>messageSentV4</code> webhook, subscribed with <code>createUserWebhookV4</code>"],
-      ["Thread messages","<code>GET /api/v4/negotiations/{negotiationID}/messages</code> · <code>text</code>, <code>sentAt</code>, <code>from</code> (pro sender fields illustrative)"],
-      ["Customer reply","<code>POST /api/v4/negotiations/{negotiationID}/messages</code> with <code>{ text }</code>, on the customer’s token"],
+      ["Push and unread dot","<code>messageSentV4</code> webhook (listed as <code>MessageCreatedV4</code> on the Pro Profiles page), subscribed with <code>createUserWebhookV4</code> for the customer"],
+      ["Thread messages","Messages API from Pro integrations: <code>GET /api/v4/negotiations/{negotiationID}/messages</code> · <code>messageID</code>, <code>customer</code>, <code>from</code>, <code>text</code>, <code>attachments</code>, <code>sentAt</code>. The docs show <code>from: \"Customer\"</code>; the pro sender value here is illustrative"],
+      ["Customer reply","<code>POST /api/v4/negotiations/{negotiationID}/messages</code> with <code>{ text }</code>. Documented for pros; using it on the customer’s token from a demand partner is what this test proves out"],
       ["Thumbtack pro label, rating","Find Pros result OfferUp already has for that <code>businessID</code>"],
       ["Buy and sell threads","OfferUp (partner side), unchanged"]
     ],
